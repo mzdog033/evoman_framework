@@ -20,9 +20,9 @@ sys.path.insert(0, 'evoman')
 
 
 # choose this for not using visuals and thus making experiments faster
-headless = True
-if headless:
-    os.environ["SDL_VIDEODRIVER"] = "dummy"
+# headless = True
+# if headless:
+#     os.environ["SDL_VIDEODRIVER"] = "dummy"
 
 
 experiment_name = 'individual_demo'
@@ -142,8 +142,10 @@ def crossover(pop):
 
     return total_offspring
 
-
+# go over to next generation
 # kills the worst genomes, and replace with new best/random solutions
+
+
 def doomsday(pop, fit_pop):
 
     worst = int(npop/4)  # a quarter of the population
@@ -176,7 +178,6 @@ if run_mode == 'test':
 
 
 # initializes population loading old solutions or generating new ones
-
 if not os.path.exists(experiment_name+'/evoman_solstate'):
 
     print('\nNEW EVOLUTION\n')
