@@ -1,4 +1,11 @@
 
+import pygame
+import os
+import pickle as pkl
+import pandas as pd
+import numpy as np
+from demo_controller import player_controller
+from evoman.environment import Environment
 import sys
 import matplotlib.pyplot as plt
 from math import pi
@@ -6,13 +13,6 @@ from matplotlib.ticker import AutoLocator
 from matplotlib.offsetbox import AnchoredText
 
 sys.path.insert(0, 'evoman')
-from environment import Environment
-from demo_controller import player_controller
-import numpy as np
-import pandas as pd
-import pickle as pkl
-import os
-import pygame
 os.environ["SDL_VIDEODRIVER"] = "dummy"
 
 ###### CREATE A FOLDER CALLED solutions IN THE SAME DIRECTORY AS THIS SCRIPT  AND PASTE ALL SOLUTION TXTs THERE ! #####
@@ -41,7 +41,8 @@ if not os.path.exists(experiment_name):
     os.makedirs(experiment_name)
 
 # Run each enemy n times for each group and record the data
-df = pd.DataFrame(columns=["fitness", "player_life", "enemy_life", "time", "group", "repetition", "enemy"])
+df = pd.DataFrame(columns=["fitness", "player_life",
+                  "enemy_life", "time", "group", "repetition", "enemy"])
 enemies = range(1, n_enemies + 1)
 index = 0
 for file in os.listdir("solutions"):
@@ -65,11 +66,12 @@ for file in os.listdir("solutions"):
                 sound=sound,
                 speed=speed)
 
-            n_vars = (env.get_num_sensors() + 1) * n_hidden + (n_hidden + 1) * 5  # multilayer with 50 neurons
+            n_vars = (env.get_num_sensors() + 1) * n_hidden + \
+                (n_hidden + 1) * 5  # multilayer with 50 neurons
             for n in range(repetitions):
                 try:
                     f, p, e, t = env.play(pcont=solution)
-                    df.loc[index,] = [f, p, e, t, group_name, n, enemy]
+                    df.loc[index, ] = [f, p, e, t, group_name, n, enemy]
                     index += 1
                 except:
                     print('bad solutioon')
@@ -80,20 +82,27 @@ if mode == "test":
     df["gain"] = df["player_life"] - df["enemy_life"]
 
     # Calculate gain and aggregate data
-    df_final = pd.DataFrame(columns=["group", "enemies_slain", "gain", "player_life", "enemy_life", "time"])
+    df_final = pd.DataFrame(
+        columns=["group", "enemies_slain", "gain", "player_life", "enemy_life", "time"])
     for i, group in enumerate(list(set(df["group"]))):
         this_group = df["group"] == group
-        dead_enemies = np.count_nonzero(df["enemy_life"].loc[this_group] == 0) / repetitions
-        gain = sum(df["player_life"].loc[this_group] - df["enemy_life"].loc[this_group]) / repetitions
-        plife = sum(df["player_life"].loc[this_group]) / repetitions / n_enemies
+        dead_enemies = np.count_nonzero(
+            df["enemy_life"].loc[this_group] == 0) / repetitions
+        gain = sum(df["player_life"].loc[this_group] -
+                   df["enemy_life"].loc[this_group]) / repetitions
+        plife = sum(df["player_life"].loc[this_group]) / \
+            repetitions / n_enemies
         elife = sum(df["enemy_life"].loc[this_group]) / repetitions / n_enemies
         time = sum(df["time"].loc[this_group]) / repetitions / n_enemies
-        df_final.loc[i] = {"group": group, "enemies_slain": dead_enemies, "gain": gain, "player_life": plife, "enemy_life": elife, "time": time}
+        df_final.loc[i] = {"group": group, "enemies_slain": dead_enemies,
+                           "gain": gain, "player_life": plife, "enemy_life": elife, "time": time}
 
     # Determine and print winners
     winners = pd.DataFrame(columns=["slain", "gain"])
-    winners_slain = df_final.sort_values(by=["enemies_slain", "player_life", "time"], ascending=False).reset_index()
-    winners_gain = df_final.sort_values(by="gain", ascending=False).reset_index()
+    winners_slain = df_final.sort_values(
+        by=["enemies_slain", "player_life", "time"], ascending=False).reset_index()
+    winners_gain = df_final.sort_values(
+        by="gain", ascending=False).reset_index()
     print("Winner for slain enemies: \n", winners["slain"].head(n=3))
     print("Winner for gain measure: \n", winners["gain"].head(n=3))
     # Index as ranks
@@ -131,7 +140,8 @@ if mode == "test":
 
             g = str(round(df_plot.drop("group", axis=1).loc[4].sum(), 2))
 
-            text_box = AnchoredText("Gain: " + g, frameon=False, loc=8, pad=-3.5)
+            text_box = AnchoredText(
+                "Gain: " + g, frameon=False, loc=8, pad=-3.5)
             plt.setp(text_box.patch, facecolor='white', alpha=0.5)
             plt.gca().add_artist(text_box)
 
@@ -144,9 +154,11 @@ if mode == "test":
             indices = [4]
 
             for lab, col in zip(labels, indices):
-                values = df_plot.loc[col].drop('group').values.flatten().tolist()
+                values = df_plot.loc[col].drop(
+                    'group').values.flatten().tolist()
                 values += values[:1]
-                ax.plot(angles, values, linewidth=1, linestyle='solid', label="energy")
+                ax.plot(angles, values, linewidth=1,
+                        linestyle='solid', label="energy")
                 ax.fill(angles, values, 'b', alpha=0.1)
                 if group == "whole_class" and lab == "gain":
                     print(lab, values)
@@ -175,4 +187,3 @@ if mode == "test":
     plt.hist(pd.to_numeric(df_final["gain"]))
     plt.title("Distribution of gain\n(whole class)")
     plt.savefig("gain_hist_whole_group.png", dpi=300)
-
