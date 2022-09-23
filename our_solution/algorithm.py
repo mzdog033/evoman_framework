@@ -1,5 +1,5 @@
 import os
-from numpy.random import randint
+from numpy.random import uniform
 import numpy as np
 from demo_controller import player_controller
 from evoman.environment import Environment
@@ -10,7 +10,7 @@ sys.path.insert(0, 'evoman')
 def initialize_population(n_population: int, bit_length: int):
     # initiatilize population
     # CODE FROM SGA-SOLUTION
-    pop = randint(0, 2, size=(n_population, bit_length))
+    pop = uniform(-1, 1, size=(n_population, bit_length))
     return pop
 
 

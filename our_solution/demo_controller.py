@@ -25,6 +25,7 @@ class player_controller(Controller):
         if self.n_hidden[0] > 0:
             # Preparing the weights and biases from the controller of layer 1
 
+            print('RESHAPE THIS ARRAY', controller)
             # Biases for the n hidden neurons
             bias1 = controller[:self.n_hidden[0]].reshape(1, self.n_hidden[0])
             # Weights for the connections from the inputs to the hidden nodes

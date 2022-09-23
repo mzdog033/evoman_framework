@@ -8,6 +8,7 @@ import sys
 import numpy
 import struct
 import binascii
+import pygame
 
 import evoman.Base
 from evoman.Base.SpriteConstants import *

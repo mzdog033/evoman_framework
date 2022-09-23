@@ -7,6 +7,7 @@
 import sys
 import numpy
 import random
+import pygame
 
 import evoman.Base
 from evoman.Base.SpriteConstants import *

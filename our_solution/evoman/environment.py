@@ -12,6 +12,7 @@ import pickle
 import numpy
 import struct
 import evoman.tmx as tmx
+import pygame
 
 
 # main class
