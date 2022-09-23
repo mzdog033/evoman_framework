@@ -4,17 +4,14 @@
 # karine.smiras@gmail.com      #
 ################################
 
+from evoman.controller import Controller
+from evoman.player import *
 import sys
 import gzip
 import pickle
 import numpy
-import pygame
-from pygame.locals import *
 import struct
 import evoman.tmx as tmx
-
-from evoman.player import *
-from evoman.controller import Controller
 
 
 # main class
@@ -107,15 +104,15 @@ class Environment(object):
         self.clock = pygame.time.Clock()  # initializes game clock resource
 
         if self.fullscreen:
-            flags = DOUBLEBUF | FULLSCREEN
+            flags = pygame.DOUBLEBUF | pygame.FULLSCREEN
         else:
-            flags = DOUBLEBUF
+            flags = pygame.DOUBLEBUF
 
         self.screen = pygame.display.set_mode((736, 512), flags)
 
         self.screen.set_alpha(None)  # disables uneeded alpha
         # enables only needed events
-        pygame.event.set_allowed([QUIT, KEYDOWN, KEYUP])
+        pygame.event.set_allowed([pygame.QUIT,  pygame.KEYDOWN,  pygame.KEYUP])
 
         self.load_sprites()
 

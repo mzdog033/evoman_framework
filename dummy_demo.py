@@ -70,6 +70,8 @@ last_best = 0
 
 
 # runs simulation
+# x = individual
+# f = fitness, which should be in an array innit.
 def simulation(env, x):
     f, p, e, t = env.play(pcont=x)
     return f

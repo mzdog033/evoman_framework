@@ -1,5 +1,5 @@
 import os
-from random import randint
+from numpy.random import randint
 import numpy as np
 from demo_controller import player_controller
 from evoman.environment import Environment
@@ -36,6 +36,7 @@ def initialize_environment():
                       enemymode="static",
                       level=2,
                       speed="fastest")
+    return env
 
 # specialist will run get algorithm.
 # get algorithm will run all this stuff with proper parameters (such as ratios) and functions.
