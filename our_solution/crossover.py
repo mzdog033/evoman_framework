@@ -2,6 +2,8 @@ import numpy as np
 
 from mutation import bit_flipping
 
+# uniform always true!
+
 
 def crossover(parent_1: list, parent_2: list, p_crossover: float, p_uni: float = 0.5, uniform: bool = False) -> tuple:
     '''This function applies crossover for the case of two parents.'''

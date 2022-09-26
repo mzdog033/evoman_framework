@@ -18,7 +18,7 @@ def runner():
     n_population = 5
     mutation_rate = 1/bit_length
     crossover_prob = 0.6  # to be tuned? TODO
-    n_iterations = 200
+    n_iterations = 100
     n_parents = 2  # what is this
     k_tournament_size = 5
 
