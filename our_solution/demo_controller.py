@@ -25,6 +25,17 @@ class player_controller(Controller):
         if self.n_hidden[0] > 0:
             # Preparing the weights and biases from the controller of layer 1
 
+            # sometimes controller is suddenly int, and cant be processed as it should
+            # put the number in an array and pad with zeroes i guess
+            if type(controller) == type(1):
+                # print('controller is int?!', controller)
+                zeros_array = np.zeros(265)
+                zeros_array[0] = controller
+                controller = zeros_array
+            # else:
+            #     print(
+            #         'controller is NOT int?! Its actually an array of length', len(controller))
+
             # Biases for the n hidden neurons
             bias1 = controller[:self.n_hidden[0]].reshape(1, self.n_hidden[0])
             # Weights for the connections from the inputs to the hidden nodes

@@ -32,7 +32,7 @@ def roulette_wheel_algorithm(cum_prob_distribution, number_of_parents=2) -> list
     return mating_pool
 
 
-def tournament_selection(generation: list, fitness_function: callable, k: int) -> list:
+def tournament_selection(generation: list, fitness_function: callable, k: int, env) -> list:
     '''
     This implements the tournament selection. K random individual (with replacement) are 
     chosen and compete with each other. The index of the best individual is returned.
@@ -42,13 +42,13 @@ def tournament_selection(generation: list, fitness_function: callable, k: int) -
     number_individuals = generation.shape[0]
     current_winner = np.random.randint(0, number_individuals)
     # Get the score which is the one to beat!
-    score = fitness_function(current_winner)
+    fitness = fitness_function(env, current_winner)
 
     # We already have one candidate, so we are left with k-1 to choose
     for candidates in range(k-1):
         contender_number = np.random.randint(0, number_individuals)
-        if fitness_function(generation[contender_number]) > score:
+        if fitness_function(env, generation[contender_number]) > fitness:
             current_winner = contender_number
-            score = fitness_function(generation[contender_number])
+            fitness = fitness_function(env, generation[contender_number])
 
     return current_winner
