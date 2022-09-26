@@ -20,9 +20,9 @@ sys.path.insert(0, 'evoman')
 
 
 # choose this for not using visuals and thus making experiments faster
-# headless = True
-# if headless:
-#     os.environ["SDL_VIDEODRIVER"] = "dummy"
+headless = True
+if headless:
+    os.environ["SDL_VIDEODRIVER"] = "dummy"
 
 
 experiment_name = 'individual_demo'
@@ -86,7 +86,7 @@ def norm(x, pfit_pop):
     return x_norm
 
 
-# evaluation
+# evaluation - map fitness from simulation (y) to population x
 def evaluate(x):
     return np.array(list(map(lambda y: simulation(env, y), x)))
 
@@ -183,7 +183,7 @@ if not os.path.exists(experiment_name+'/evoman_solstate'):
     print('\nNEW EVOLUTION\n')
 
     pop = np.random.uniform(dom_l, dom_u, (npop, n_vars))
-    fit_pop = evaluate(pop)
+    fit_pop = evaluate(pop)  # fitness and population mappen
     best = np.argmax(fit_pop)
     mean = np.mean(fit_pop)
     std = np.std(fit_pop)

@@ -1,32 +1,41 @@
 import numpy as np
 
+from mutation import bit_flipping
 
-def selection_probabilities(generation, fitness_function: callable, sigma_scaling=False) -> list:
-    '''
-    Calculates the individual selection probabilities based on the fitness function. 
-    Applies sigma-scaling if desired.
-    '''
 
-    number_individuals = generation.shape[0]
-    total_fitness = np.sum([fitness_function(generation[i])
-                           for i in range(number_individuals)])
+def crossover(parent_1: list, parent_2: list, p_crossover: float, p_uni: float = 0.5, uniform: bool = False) -> tuple:
+    '''This function applies crossover for the case of two parents.'''
 
-    if sigma_scaling == True:
+    # Check if cross-over is applied
+    if p_crossover > np.random.uniform():
+        # Random uniform crossover
+        if uniform:
+            child_1 = []
+            for gene in range(len(parent_1)):
+                if p_uni > np.random.uniform():
+                    # Choose first parent
+                    child_1.append(parent_1[gene])
+                else:
+                    child_1.append(parent_2[gene])
 
-        mean_fitness = total_fitness/number_individuals
-        std_fitness = np.std([fitness_function(generation[i])
-                             for i in range(number_individuals)])
-        c = 2  # Constant
+            # The second child is used by using an inverse mapping,
+            # We use the bit-flipping function defined above.
+            child_2 = [bit_flipping(gene) for gene in child_1]
 
-        fitness_sigma = [np.max(fitness_function(generation[i])-(mean_fitness-(c*std_fitness)), 0) for i
-                         in range(number_individuals)]
+            return child_1, child_2
 
-        # Now we need to sum up the sigma-scaled fitnesses
-        total_fitness_sigma = np.sum(fitness_sigma)
-        selection_prob = [fitness_sigma[i] /
-                          total_fitness_sigma for i in range(number_individuals)]
+        # If no uniform crossover is selected, i.e. 1-point crossover is applied
+        else:
+            # We exclude the splitpoints in the beginning and the end
+            split_point = np.random.randint(1, len(parent_1)-1)
+
+            # Now return perform the one-point crossover
+            child_1 = np.array([parent_1[gene] if gene <= split_point else parent_2[gene]
+                                for gene in range(len(parent_1))])
+            child_2 = np.array([parent_2[gene] if gene <= split_point else parent_1[gene]
+                                for gene in range(len(parent_1))])
+
+            return child_1, child_2
     else:
-        # Apply normal inverse scaling
-        selection_prob = [(fitness_function(generation[i])/total_fitness)
-                          for i in range(number_individuals)]
-    return selection_prob
+        # Just returns the original parents
+        return parent_1, parent_2
