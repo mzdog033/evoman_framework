@@ -3,33 +3,33 @@ import numpy as np
 # roulette wheel
 
 
-def cumulative_probability_distribution(selection_probability: list) -> list:
-    '''Calculates the cumulative probability distribution based on individual selection probabilities.'''
-    cum_prob_distribution = []
-    current_cum_prob_dis = 0
-    for i in range(len(selection_probability)):
-        current_cum_prob_dis += selection_probability[i]
-        cum_prob_distribution.append(current_cum_prob_dis)
-    return cum_prob_distribution
+# def cumulative_probability_distribution(selection_probability: list) -> list:
+#     '''Calculates the cumulative probability distribution based on individual selection probabilities.'''
+#     cum_prob_distribution = []
+#     current_cum_prob_dis = 0
+#     for i in range(len(selection_probability)):
+#         current_cum_prob_dis += selection_probability[i]
+#         cum_prob_distribution.append(current_cum_prob_dis)
+#     return cum_prob_distribution
 
 
-def roulette_wheel_algorithm(cum_prob_distribution, number_of_parents=2) -> list:
-    '''
-    Implements the roulette wheel algorithm as discussed in the 
-    accompanying text book by Eiben and Smith (2015).
-    '''
-    current_member = 1
-    mating_pool = []
-    while current_member <= number_of_parents:
-        i = 0  # Index
-        r = np.random.uniform()  # Random number between 0 and 1
-        while cum_prob_distribution[i] < r:
-            i += 1
+# def roulette_wheel_algorithm(cum_prob_distribution, number_of_parents=2) -> list:
+#     '''
+#     Implements the roulette wheel algorithm as discussed in the
+#     accompanying text book by Eiben and Smith (2015).
+#     '''
+#     current_member = 1
+#     mating_pool = []
+#     while current_member <= number_of_parents:
+#         i = 0  # Index
+#         r = np.random.uniform()  # Random number between 0 and 1
+#         while cum_prob_distribution[i] < r:
+#             i += 1
 
-        mating_pool.append(i)
-        current_member += 1
+#         mating_pool.append(i)
+#         current_member += 1
 
-    return mating_pool
+#     return mating_pool
 
 
 def tournament_selection(generation: list, fitness_function: callable, k: int, env) -> list:

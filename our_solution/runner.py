@@ -3,9 +3,9 @@ from init_population import initialize_population
 from fitness import simulation, fittest_solution
 from crossover import crossover
 from mutation import bit_flipping, mutation_operator
-from fitness import evaluate
-from selection import cumulative_probability_distribution, tournament_selection
-from selection_probabilities import selection_probabilities
+# from fitness import evaluate
+from selection import tournament_selection
+# from selection_probabilities import selection_probabilities
 
 import numpy as np
 
@@ -16,22 +16,16 @@ def runner():
 
     # variables
     bit_length = 265
-    n_population = 5  # increase ofc
+    n_population = 2  # increase ofc
     mutation_rate = 1/bit_length
     crossover_prob = 0.6  # to be tuned? TODO
-    n_iterations = 100
+    n_iterations = 1
     n_parents = 2  # what is this
     k_tournament_size = 5
 
     # initialize population
     init_pop = initialize_population(n_population, bit_length)
     # print('initial population', init_pop)
-
-    # stuff from opt_spec_demo
-    # fitness (from simulation) and population mapping
-    # fit_pop = evaluate(init_pop, init_env)
-    # solutions = [init_pop, fit_pop]
-    # init_env.update_solutions(solutions)
 
     best_fitness = fittest_solution(init_pop, init_env)
     print(
@@ -47,7 +41,6 @@ def runner():
 
             # loop through list of population (halfed) twice (n_parents)
             for parent in range(n_parents):
-
                 selected_mate = tournament_selection(
                     init_pop, simulation, k_tournament_size, init_env)
                 mating_pool.append(selected_mate)
@@ -64,7 +57,7 @@ def runner():
 
             # generational survival selection where all parents are replaced
             new_generation.append(child_1.tolist())
-            new_generation.append(child_1.tolist())
+            new_generation.append(child_2.tolist())
 
         new_population = np.asarray(new_generation)
 

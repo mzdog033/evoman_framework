@@ -155,7 +155,7 @@ def doomsday(pop, fit_pop):
     for o in orderasc:
         for j in range(0, n_vars):
             pro = np.random.uniform(0, 1)
-            if np.random.uniform(0, 1) <= pro:
+            if np.random.uniform-(0, 1) <= pro:
                 # random dna, uniform dist.
                 pop[o][j] = np.random.uniform(dom_l, dom_u)
             else:

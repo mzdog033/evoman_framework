@@ -19,7 +19,7 @@ def initialize_environment():
     n_hidden_neurons = 10
 
     env = Environment(experiment_name=experiment_name,
-                      enemies=[2],
+                      enemies=[2, 2, 2],
                       playermode="ai",
                       player_controller=player_controller(n_hidden_neurons),
                       enemymode="static",
