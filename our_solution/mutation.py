@@ -1,8 +1,8 @@
 import numpy as np
-from deap import base, creator
+from deap import base, tools
 
 
-def gaussian_mutation(selected_group):
+def gaussian_mutation(selected_individuals, mutation_operator: callable):
     # mutation_ratio = 1.4  # change this, this is a random number
 
     # sigma = 0.3
