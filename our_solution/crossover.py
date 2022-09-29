@@ -1,43 +1,31 @@
 import numpy as np
-
-from mutation import bit_flipping
-
-# uniform always true!
+import numpy.random as random
 
 
-def crossover(parent_1: list, parent_2: list, p_crossover: float, p_uni: float = 0.5, uniform: bool = False) -> tuple:
-    '''This function applies crossover for the case of two parents.'''
+def TwoPointCrossover(ind1, ind2):
+    """Execute a two points crossover with copy on the input individuals. The
+    copy is required because the slicing in numpy returns a view of the data,
+    which leads to a self overwritting in the swap operation. It prevents
+    ::
 
-    # Check if cross-over is applied
-    if p_crossover > np.random.uniform():
-        # Random uniform crossover
-        if uniform:
-            child_1 = []
-            for gene in range(len(parent_1)):
-                if p_uni > np.random.uniform():
-                    # Choose first parent
-                    child_1.append(parent_1[gene])
-                else:
-                    child_1.append(parent_2[gene])
+        >>> import numpy
+        >>> a = numpy.array((1,2,3,4))
+        >>> b = numpy.array((5,6,7,8))
+        >>> a[1:3], b[1:3] = b[1:3], a[1:3]
+        >>> print(a)
+        [1 6 7 4]
+        >>> print(b)
+        [5 6 7 8]
+    """
+    size = len(ind1)
+    crossover_point1 = random.randint(1, size)
+    crossover_point2 = random.randint(1, size - 1)
+    if crossover_point2 >= crossover_point1:
+        crossover_point2 += 1
+    else:  # Swap the two cx points
+        crossover_point1, crossover_point2 = crossover_point2, crossover_point1
 
-            # The second child is used by using an inverse mapping,
-            # We use the bit-flipping function defined above.
-            child_2 = [bit_flipping(gene) for gene in child_1]
+    ind1[crossover_point1:crossover_point2], ind2[crossover_point1:crossover_point2] \
+        = ind2[crossover_point1:crossover_point2].copy(), ind1[crossover_point1:crossover_point2].copy()
 
-            return child_1, child_2
-
-        # If no uniform crossover is selected, i.e. 1-point crossover is applied
-        else:
-            # We exclude the splitpoints in the beginning and the end
-            split_point = np.random.randint(1, len(parent_1)-1)
-
-            # Now return perform the one-point crossover
-            child_1 = np.array([parent_1[gene] if gene <= split_point else parent_2[gene]
-                                for gene in range(len(parent_1))])
-            child_2 = np.array([parent_2[gene] if gene <= split_point else parent_1[gene]
-                                for gene in range(len(parent_1))])
-
-            return child_1, child_2
-    else:
-        # Just returns the original parents
-        return parent_1, parent_2
+    return ind1, ind2

@@ -22,8 +22,3 @@ def fittest_solution(population, env):
 def simulation(env: Environment, x):
     fitness, player_life, enemy_life, time = env.play(pcont=x)
     return float(fitness)
-
-
-# evaluation - map fitness from simulation (y) to population x
-def evaluate(x, env):
-    return np.array(list(map(lambda y: simulation(env, y), x)))
