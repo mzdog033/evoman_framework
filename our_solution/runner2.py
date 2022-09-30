@@ -95,6 +95,10 @@ def main_function():
                     average_fitness_pr_gen = np.append(
                         average_fitness_pr_gen, avg_fitness_curr_gen)
 
+                    print('avg fit pr gen', average_fitness_pr_gen)
+                    print('best fit pr gen', best_fitness_pr_gen)
+                    print('best indv pr gen', best_inds_pr_gen)
+
                     # print('population size.:', population_size)
 
                     # PARENT SELECTION
