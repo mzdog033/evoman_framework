@@ -22,30 +22,31 @@ k_tournament_size = 2
 
 def main_function():
     for enemy in range(1, 4):  # /// 3-Enemies-loop start
-        #  Replace range with enemies_id list
+        best_solution_per_Enemy = np.array([])
 
-        # initialize environment with enemy
+        # INITIALIZE ENVIRONMENT with enemy
         env = initialize_environment(enemy)
 
-        for EA in range(2):  # /// 2-EAs-loop start
+        for EA in range(1):  # /// 2-EAs-loop start
             #  Replace range with EA list
 
             average_fitnesses_pr_run = np.array([])
-            best_fitness_pr_run = np.array([])
+            best_fitnesses_pr_run = np.array([])
+            best_inds_pr_run = np.array([])
+
             for run in range(10):  # /// 10-runs-loop start
-                # initialize population (and environment??)
                 print(f' -------- RUN {run+1} -------- ')
                 print('Initial stats: ')
 
+                # INITIALIZE POPULATION
                 population = initialize_population(10, 265)  # 150, 265
                 genome_size = population.shape[1]
                 population_size = population.shape[0]
                 average_fitness_pr_gen = np.array([])
                 best_fitness_pr_gen = np.array([])
+                best_inds_pr_gen = np.array([])
 
-                best_ind_pr_run = np.array([])
-
-                for generation in range(1, 21):  # /// 20-generational-loop start
+                for generation in range(1, 2):  # /// 20-generational-loop start
                     #  fitness stuff
                     list_of_fitnesses = fittest_solution(population, env)
                     # TRYING TO MAP FITNESS TO POPULATION
@@ -57,11 +58,20 @@ def main_function():
                     # pop_fitness_map = dict(zip(population, list_of_fitnesses))
                     # print('fitness-population mapping', pop_fitness_map)
 
+                    # best fitness curr generation
                     best_fitness_curr_gen = np.max(list_of_fitnesses)
+                    best_ind_idx = np.where(list_of_fitnesses ==
+                                            best_fitness_curr_gen)
+                    # best individual curr generation
+                    best_ind_curr_gen = population[best_ind_idx[0][0]]
+                    # avg fitness curr generation
+                    avg_fitness_curr_gen = np.mean(list_of_fitnesses)
+
+                    # add to lists
                     best_fitness_pr_gen = np.append(
                         best_fitness_pr_gen, best_fitness_curr_gen)
-
-                    avg_fitness_curr_gen = np.mean(list_of_fitnesses)
+                    best_inds_pr_gen = np.append(
+                        best_inds_pr_gen, best_ind_curr_gen)
                     average_fitness_pr_gen = np.append(
                         average_fitness_pr_gen, avg_fitness_curr_gen)
 
@@ -70,13 +80,13 @@ def main_function():
 
                     # print('population size.:', population_size)
 
-                    # select parents
+                    # PARENT SELECTION
                     selected_parents = tournament_selection(
                         population, list_of_fitnesses, k_tournament_size)  # selected_parents size (5 * 256)
                     parents_size = selected_parents.shape[0]
                     # print('parents no.:', parents_size)
 
-                    # mate
+                    # CROSSOVER
                     children = np.array([])
 
                     for parents in range(parents_size):
@@ -93,7 +103,7 @@ def main_function():
                     children = children.reshape(population_size, genome_size)
                     # print('children no.:', children.shape[0])
 
-                    # mutation
+                    # MUTATION
                     # choose a few children based on some probability "mutation_ratio"
                     mutated_children = np.array([])
                     for child in children:
@@ -126,32 +136,32 @@ def main_function():
 
                 #  /// 20-generational-loop finished
 
-                #  save the 20 best fitnesses in each loop (you will have a list of 20 best fitnesses 10 times (10 * 20))
-                # aka 10 lists of 20 fitnesses
-
+                # saving lists of best fitnesses, average fitnesses and best individuals from the generational-loop
                 average_fitnesses_pr_run = np.append(
                     average_fitnesses_pr_run, average_fitness_pr_gen)
-                best_fitness_pr_run = np.append(
-                    best_fitness_pr_run, best_fitness_pr_gen)
-
-                print('list of lists of best fitnesses pr gen',
-                      best_fitness_pr_run)
-
+                best_fitnesses_pr_run = np.append(
+                    best_fitnesses_pr_run, best_fitness_pr_gen)
+                best_inds_pr_run = np.append(
+                    best_inds_pr_run, best_inds_pr_gen)
             # /// 10-runs-loop finished
 
             # /// 10-best-indivudals-test-loop start
-            for best_indivdual in range(10):
+            for i in range(10):
                 print('Testing top individuals against enemy %...', enemy)
+                individual = best_inds_pr_run[i]
+                fitness_from_best_ind_runs = np.array([])
 
                 # run five times
-                for i in range(5):
-                    f, pl, el, t = env.play()
+                for j in range(5):
+                    f, pl, el, t = env.play(pcont=individual)
 
-                # use the same environment
+                    fitness_from_best_ind_runs = np.append(
+                        fitness_from_best_ind_runs, f)
 
-                # find average of average of best individuals
-                # Play the best 10 individual again the enemy (env.play())
-                # return the best fitness out of these 10 runs
+                best_solution_per_Enemy = np.append(
+                    best_solution_per_Enemy, np.mean(fitness_from_best_ind_runs))
+                print(
+                    f'Best solution for enemy {enemy}: {best_solution_per_Enemy[enemy-1]}')
 
                 # /// 10-best-indivudals-test-loop finished
 
