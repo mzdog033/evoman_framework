@@ -33,15 +33,30 @@ def main_function():
             for run in range(10):  # /// 10-runs-loop start
                 # initialize population (and environment??)
                 print(f' -------- RUN {run+1} -------- ')
+                print('Initial stats: ')
 
                 population = initialize_population(10, 265)  # 150, 265
                 genome_size = population.shape[1]
+                population_size = population.shape[0]
                 average_fitness_pr_gen = np.array([])
                 best_fitness_pr_gen = np.array([])
+
+                average_fitnesses_pr_run = np.array([])
+                best_fitness_pr_run = np.array([])
+
+                best_ind_pr_run = np.array([])
 
                 for generation in range(1, 21):  # /// 20-generational-loop start
                     #  fitness stuff
                     list_of_fitnesses = fittest_solution(population, env)
+                    # TRYING TO MAP FITNESS TO POPULATION
+                    # print('fitness ',
+                    #       list_of_fitnesses[0])
+                    # print('pop ',
+                    #       population[0])
+
+                    # pop_fitness_map = dict(zip(population, list_of_fitnesses))
+                    # print('fitness-population mapping', pop_fitness_map)
 
                     best_fitness_curr_gen = np.max(list_of_fitnesses)
                     best_fitness_pr_gen = np.append(
@@ -53,16 +68,14 @@ def main_function():
 
                     #  printing..
                     print(f'Generation no. {generation} running...')
-                    print(
-                        f'Generation {generation} - Best: {best_fitness_curr_gen} Mean: {avg_fitness_curr_gen} Std: {np.std(list_of_fitnesses)}')
+
+                    # print('population size.:', population_size)
 
                     # select parents
                     selected_parents = tournament_selection(
-                        population, list_of_fitnesses, k_tournament_size)  # selected_parents size (2 * 256)
-
+                        population, list_of_fitnesses, k_tournament_size)  # selected_parents size (5 * 256)
                     parents_size = selected_parents.shape[0]
-
-                    # what is this? only 2 individuals, because thats the half of 5. and population is currently only 5!
+                    # print('parents no.:', parents_size)
 
                     # mate
                     children = np.array([])
@@ -76,51 +89,68 @@ def main_function():
                         ind1, ind2 = toolbox.crossover(
                             parent_ind_1, parent_ind_2)
                         children = np.append(children, ind1)
+                        children = np.append(children, ind2)
 
-                    children = children.reshape(parents_size, genome_size)
+                    children = children.reshape(population_size, genome_size)
+                    # print('children no.:', children.shape[0])
 
                     # mutation
-                    # choose a few children based on some probability
+                    # choose a few children based on some probability "mutation_ratio"
                     mutated_children = np.array([])
                     for child in children:
+                        # random number to compare with mutation_ratio
                         random_no = np.random.uniform(0, 1)
-                        print('random number', random_no)
 
                         if(random_no < mutation_ratio):
-                            print('mutation time')
                             mutated_child = toolbox.mutate(child)
                             # add mutated child to mutated_children list
                             mutated_children = np.append(
                                 mutated_children, mutated_child)
                         else:
-                            print('no mutation time')
                             # add non-mutated child to mutated_children list
                             mutated_children = np.append(
                                 mutated_children, child)
 
-                    print('mutated childre no.', len(mutated_children))
                     mutated_children = mutated_children.reshape(
-                        len(children), genome_size)
+                        population_size, genome_size)
+                    # print('mutated no.:', mutated_children.shape[0])
 
                     # select for survival
 
                     # go to next generation
+                    # For now, lets just replace the whole population.
+                    population = mutated_children
 
-                    # save best fitness each generation in an array
-                    # save average fitness each generation in an array
+                    # Print stats for current generation
+                    print(
+                        f'Generation {generation} stats - Best: {best_fitness_curr_gen} Mean: {avg_fitness_curr_gen} Std: {np.std(list_of_fitnesses)}')
 
                 #  /// 20-generational-loop finished
 
                 #  save the 20 best fitnesses in each loop (you will have a list of 20 best fitnesses 10 times (10 * 20))
                 # aka 10 lists of 20 fitnesses
 
+                average_fitnesses_pr_run = np.append(
+                    average_fitnesses_pr_run, average_fitness_pr_gen)
+                best_fitness_pr_run = np.append(
+                    best_fitness_pr_run, best_fitness_pr_gen)
+
+                print('list of lists of best fitnesses pr gen',
+                      best_fitness_pr_run)
+
             # /// 10-runs-loop finished
 
             # /// 10-best-indivudals-test-loop start
             for best_indivdual in range(10):
-                print('hi')
+                print('Testing top individuals against enemy %...', enemy)
 
-                # replace range with best_individuals list maybe
+                # run five times
+                for i in range(5):
+                    f, pl, el, t = env.play()
+
+                # use the same environment
+
+                # find average of average of best individuals
                 # Play the best 10 individual again the enemy (env.play())
                 # return the best fitness out of these 10 runs
 
@@ -128,9 +158,9 @@ def main_function():
 
                 # do the same thing for the next experiment: with the other selection mechanism
 
-                # /// 2-EAs-loop finished
+        # /// 2-EAs-loop finished
 
-                #  /// 3-Enemies-loop finished
+    #  /// 3-Enemies-loop finished
 
 
 main_function()

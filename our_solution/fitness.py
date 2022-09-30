@@ -4,7 +4,6 @@ from evoman.environment import Environment
 
 
 def fittest_solution(population, env):
-    '''This returns the highest fitness value of the whole generation.'''
     list_of_fitnesses = np.array([])
 
     for i in range(population.shape[0]):
