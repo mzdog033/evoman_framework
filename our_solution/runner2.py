@@ -30,6 +30,8 @@ def main_function():
         for EA in range(2):  # /// 2-EAs-loop start
             #  Replace range with EA list
 
+            average_fitnesses_pr_run = np.array([])
+            best_fitness_pr_run = np.array([])
             for run in range(10):  # /// 10-runs-loop start
                 # initialize population (and environment??)
                 print(f' -------- RUN {run+1} -------- ')
@@ -40,9 +42,6 @@ def main_function():
                 population_size = population.shape[0]
                 average_fitness_pr_gen = np.array([])
                 best_fitness_pr_gen = np.array([])
-
-                average_fitnesses_pr_run = np.array([])
-                best_fitness_pr_run = np.array([])
 
                 best_ind_pr_run = np.array([])
 
