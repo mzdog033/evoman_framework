@@ -11,9 +11,10 @@ toolbox = base.Toolbox()
 toolbox = base.Toolbox()
 toolbox.register("crossover", tools.cxTwoPoint)
 # Gaussian Mutation - WHY THESE PARAMETERS?
-toolbox.register("mutate", tools.mutGaussian, mu=0, sigma=1, indpb=0.1)
-toolbox.register("parent_selection", tools.selTournament,
-                 tournsize=5)  # WHY 5?? might need to be 2
+genome_size = 256
+mutation_ratio = 0.1
+toolbox.register("mutate", tools.mutGaussian, mu=0,
+                 sigma=1, indpb=mutation_ratio)
 # toolbox.register("evaluate", toolbox.evaluate)  # what does this do
 
 k_tournament_size = 2
@@ -33,13 +34,12 @@ def main_function():
                 # initialize population (and environment??)
                 print(f' -------- RUN {run+1} -------- ')
 
-                population = initialize_population(5, 265)  # 150, 265
+                population = initialize_population(10, 265)  # 150, 265
+                genome_size = population.shape[1]
                 average_fitness_pr_gen = np.array([])
                 best_fitness_pr_gen = np.array([])
 
                 for generation in range(1, 21):  # /// 20-generational-loop start
-                    print(f'Generation no. {generation} running...')
-
                     #  fitness stuff
                     list_of_fitnesses = fittest_solution(population, env)
 
@@ -51,44 +51,59 @@ def main_function():
                     average_fitness_pr_gen = np.append(
                         average_fitness_pr_gen, avg_fitness_curr_gen)
 
+                    #  printing..
+                    print(f'Generation no. {generation} running...')
                     print(
                         f'Generation {generation} - Best: {best_fitness_curr_gen} Mean: {avg_fitness_curr_gen} Std: {np.std(list_of_fitnesses)}')
 
                     # select parents
                     selected_parents = tournament_selection(
-                        population, list_of_fitnesses, k_tournament_size)
+                        population, list_of_fitnesses, k_tournament_size)  # selected_parents size (2 * 256)
 
-                    print('init population shape', population.shape[0])
-                    print('selected parents shape 1',
-                          selected_parents.shape[0])
                     parents_size = selected_parents.shape[0]
-                    print('selected parents shape 2',
-                          selected_parents.shape[1])
-                    print('parent size', parents_size)
 
-                    # what is this? only 2 individuals
-                    parent1 = selected_parents[0]
-                    parent2 = selected_parents[1]
-
-                    children = np.array([])
+                    # what is this? only 2 individuals, because thats the half of 5. and population is currently only 5!
 
                     # mate
-                    for parents in range(parents_size):
-                        parent_ind_1 = parent1[np.random.randint(parents_size)]
-                        parent_ind_2 = parent2[np.random.randint(parents_size)]
+                    children = np.array([])
 
-                        ind1, ind2 = tools.cxTwoPoint(
+                    for parents in range(parents_size):
+                        parent_ind_1 = selected_parents[np.random.randint(
+                            len(selected_parents))]
+                        parent_ind_2 = selected_parents[np.random.randint(
+                            len(selected_parents))]
+
+                        ind1, ind2 = toolbox.crossover(
                             parent_ind_1, parent_ind_2)
                         children = np.append(children, ind1)
-                        children = np.append(children, ind2)
 
-                    # children_list = np.array([])
-                    # for individual in
-                    # children = tools.cxTwoPoint()
+                    children = children.reshape(parents_size, genome_size)
 
-                    # select for mutation (mutation ratio)
                     # mutation
+                    # choose a few children based on some probability
+                    mutated_children = np.array([])
+                    for child in children:
+                        random_no = np.random.uniform(0, 1)
+                        print('random number', random_no)
+
+                        if(random_no < mutation_ratio):
+                            print('mutation time')
+                            mutated_child = toolbox.mutate(child)
+                            # add mutated child to mutated_children list
+                            mutated_children = np.append(
+                                mutated_children, mutated_child)
+                        else:
+                            print('no mutation time')
+                            # add non-mutated child to mutated_children list
+                            mutated_children = np.append(
+                                mutated_children, child)
+
+                    print('mutated childre no.', len(mutated_children))
+                    mutated_children = mutated_children.reshape(
+                        len(children), genome_size)
+
                     # select for survival
+
                     # go to next generation
 
                     # save best fitness each generation in an array
