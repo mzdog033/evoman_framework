@@ -1,3 +1,4 @@
+from distutils.ccompiler import gen_preprocess_options
 from deap import base, tools
 import numpy as np
 from init_environment import initialize_environment
@@ -21,6 +22,7 @@ k_tournament_size = 2
 
 
 def main_function():
+    GENS_STARTED = False
     for enemy in range(1, 4):  # /// 3-Enemies-loop start
         best_solution_per_Enemy = np.array([])
 
@@ -34,7 +36,7 @@ def main_function():
             best_fitnesses_pr_run = np.array([])
             best_inds_pr_run = np.array([])
 
-            for run in range(10):  # /// 10-runs-loop start
+            for run in range(3):  # /// 10-runs-loop start
                 print(f' -------- RUN {run+1} -------- ')
                 print('Initial stats: ')
 
@@ -46,7 +48,25 @@ def main_function():
                 best_fitness_pr_gen = np.array([])
                 best_inds_pr_gen = np.array([])
 
-                for generation in range(1, 2):  # /// 20-generational-loop start
+                if GENS_STARTED == True:
+                    print('avg fit pr gen', average_fitness_pr_gen)
+                    print('best fit pr gen', best_fitness_pr_gen)
+                    print('best indv pr gen', best_inds_pr_gen)
+
+                    f = open("logs/avereage_fitnesses_pr_run.txt", "a")
+                    g = open("logs/best_fitnesses_pr_run.txt", "a")
+                    h = open("logs/best_individuals_pr_run.txt", "a")
+                    for gen in range(2):  # run for number of generations
+                        np.savetxt(f, average_fitness_pr_gen[gen])
+                        np.savetxt(g, best_fitness_pr_gen[gen])
+                        np.savetxt(h, best_inds_pr_gen[gen])
+
+                    f.close()
+                    g.close()
+                    h.close()
+
+                for generation in range(1, 3):  # /// 20-generational-loop start
+                    GENS_STARTED = True
                     #  fitness stuff
                     list_of_fitnesses = fittest_solution(population, env)
                     # TRYING TO MAP FITNESS TO POPULATION
@@ -74,9 +94,6 @@ def main_function():
                         best_inds_pr_gen, best_ind_curr_gen)
                     average_fitness_pr_gen = np.append(
                         average_fitness_pr_gen, avg_fitness_curr_gen)
-
-                    #  printing..
-                    print(f'Generation no. {generation} running...')
 
                     # print('population size.:', population_size)
 
@@ -132,24 +149,36 @@ def main_function():
 
                     # Print stats for current generation
                     print(
-                        f'Generation {generation} stats - Best: {best_fitness_curr_gen} Mean: {avg_fitness_curr_gen} Std: {np.std(list_of_fitnesses)}')
+                        f'-------\nGeneration {generation} stats - Best: {best_fitness_curr_gen} Mean: {avg_fitness_curr_gen} Std: {np.std(list_of_fitnesses)}')
 
+                    continue
                 #  /// 20-generational-loop finished
 
                 # saving lists of best fitnesses, average fitnesses and best individuals from the generational-loop
-                average_fitnesses_pr_run = np.append(
-                    average_fitnesses_pr_run, average_fitness_pr_gen)
-                best_fitnesses_pr_run = np.append(
-                    best_fitnesses_pr_run, best_fitness_pr_gen)
-                best_inds_pr_run = np.append(
-                    best_inds_pr_run, best_inds_pr_gen)
+                # average_fitnesses_pr_run = np.append(
+                #     average_fitnesses_pr_run, average_fitness_pr_gen)
+                # best_fitnesses_pr_run = np.append(
+                #     best_fitnesses_pr_run, best_fitness_pr_gen)
+                # best_inds_pr_run = np.array(
+                #     [best_inds_pr_run, best_inds_pr_gen])
+
+                # WRITE THESE TO FILES INSTEAD WTF
+
+                # print('len of best inds per run list',
+                #       best_inds_pr_run.shape[0])
+                # print('best inds per run list',
+                #       best_inds_pr_run)
+
+                # print('best individuel pr gen list', best_inds_pr_gen)
+                # print('best individuel pr run list', best_inds_pr_run)
             # /// 10-runs-loop finished
 
             # /// 10-best-indivudals-test-loop start
-            for i in range(10):
+            for i in range(3):
                 print('Testing top individuals against enemy %...', enemy)
                 individual = best_inds_pr_run[i]
                 fitness_from_best_ind_runs = np.array([])
+                print('individual', individual)
 
                 # run five times
                 for j in range(5):
