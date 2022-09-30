@@ -23,6 +23,9 @@ k_tournament_size = 2
 
 def main_function():
     GENS_STARTED = False
+
+    # FIX ISSUE IN ENVIRONMENT WITH PADDED ZEROS
+
     for enemy in range(1, 4):  # /// 3-Enemies-loop start
         best_solution_per_Enemy = np.array([])
 
@@ -32,9 +35,9 @@ def main_function():
         for EA in range(1):  # /// 2-EAs-loop start
             #  Replace range with EA list
 
-            average_fitnesses_pr_run = np.array([])
-            best_fitnesses_pr_run = np.array([])
-            best_inds_pr_run = np.array([])
+            average_fitnesses_pr_run = np.array([])  # 10 x 20
+            best_fitnesses_pr_run = np.array([])  # 10 x 20
+            best_inds_pr_run = np.array([])  # 10
 
             for run in range(3):  # /// 10-runs-loop start
                 print(f' -------- RUN {run+1} -------- ')
@@ -44,6 +47,7 @@ def main_function():
                 population = initialize_population(10, 265)  # 150, 265
                 genome_size = population.shape[1]
                 population_size = population.shape[0]
+
                 average_fitness_pr_gen = np.array([])
                 best_fitness_pr_gen = np.array([])
                 best_inds_pr_gen = np.array([])
@@ -160,7 +164,7 @@ def main_function():
 
                 # saving lists of best fitnesses, average fitnesses and best individuals from the generational-loop
                 # average_fitnesses_pr_run = np.append(
-                #     average_fitnesses_pr_run, average_fitness_pr_gen)
+                #     average_fitnesses_pr_run[generation], average_fitness_pr_gen)
                 # best_fitnesses_pr_run = np.append(
                 #     best_fitnesses_pr_run, best_fitness_pr_gen)
                 # best_inds_pr_run = np.array(
