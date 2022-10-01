@@ -38,12 +38,12 @@ def main_function():
 
     for enemy in range(1, 4):  # /// 3-Enemies-loop start
         # check if files exist
-        if os.path.exists('logs/average_fitnesses_pr_run.csv'):
-            os.remove('logs/average_fitnesses_pr_run.csv')
-        if os.path.exists('logs/best_fitnesses_pr_run.csv'):
-            os.remove('logs/best_fitnesses_pr_run.csv')
-        if os.path.exists('logs/best_individuals_pr_run.csv'):
-            os.remove('logs/best_individuals_pr_run.csv')
+        if os.path.exists('./logs/average_fitnesses_pr_run.csv'):
+            os.remove('./logs/average_fitnesses_pr_run.csv')
+        if os.path.exists('./logs/best_fitnesses_pr_run.csv'):
+            os.remove('./logs/best_fitnesses_pr_run.csv')
+        if os.path.exists('./logs/best_individuals_pr_run.csv'):
+            os.remove('./logs/best_individuals_pr_run.csv')
 
         best_solution_per_Enemy = np.array([])
 
@@ -154,9 +154,9 @@ def main_function():
                     best_fitness_pr_gen = best_fitness_pr_gen.reshape(
                         no_of_runs, no_of_generations)
 
-                    f = open("logs/average_fitnesses_pr_run.csv", "a")
-                    g = open("logs/best_fitnesses_pr_run.csv", "a")
-                    h = open("logs/best_individuals_pr_run.csv", "a")
+                    f = open("./logs/average_fitnesses_pr_run.csv", "a")
+                    g = open("./logs/best_fitnesses_pr_run.csv", "a")
+                    h = open("./logs/best_individuals_pr_run.csv", "a")
                     np.savetxt(f, average_fitness_pr_gen, delimiter=',')
                     np.savetxt(g, best_fitness_pr_gen, delimiter=',')
                     np.savetxt(h, best_inds_pr_gen, delimiter=',')
