@@ -13,11 +13,12 @@ toolbox = base.Toolbox()
 toolbox = base.Toolbox()
 toolbox.register("crossover", tools.cxTwoPoint)
 # Gaussian Mutation - WHY THESE PARAMETERS?
-genome_size = 256
+global_genome_size = 265
 mutation_ratio = 0.1
 toolbox.register("mutate", tools.mutGaussian, mu=0,
                  sigma=1, indpb=mutation_ratio)
 # toolbox.register("evaluate", toolbox.evaluate)  # what does this do
+global_population_size = 10
 no_of_runs = 3
 no_of_generations = 2
 k_tournament_size = 2
@@ -27,23 +28,17 @@ def main_function():
 
     # FIX ISSUE IN ENVIRONMENT WITH PADDED ZEROS
 
-    # the new idea for saving best individuals is: dataframes
-    # create a column per Run (i.e.: "Run 1"). There will be 10 columns.
-    # add the best individuals from each generation in that column (Each column will thus have 20 rows)
-    # The top 10 best individuals are the best ones from each column.
+    #
 
-    LAST_GEN: False
-
+    best_solution_per_Enemy = np.array([])
     for enemy in range(1, 4):  # /// 3-Enemies-loop start
-        # check if files exist
-        if os.path.exists('logs/average_fitnesses_pr_run.csv'):
-            os.remove('logs/average_fitnesses_pr_run.csv')
-        if os.path.exists('logs/best_fitnesses_pr_run.csv'):
-            os.remove('logs/best_fitnesses_pr_run.csv')
-        if os.path.exists('logs/best_individuals_pr_run.csv'):
-            os.remove('logs/best_individuals_pr_run.csv')
-
-        best_solution_per_Enemy = np.array([])
+        # check if files exist MAKE FOR EACH ENEMEY!!!!!!!!!!!!
+        # if os.path.exists('logs/average_fitnesses_pr_run.csv'):
+        #     os.remove('logs/average_fitnesses_pr_run.csv')
+        # if os.path.exists('logs/best_fitnesses_pr_run.csv'):
+        #     os.remove('logs/best_fitnesses_pr_run.csv')
+        # if os.path.exists('logs/best_individuals_pr_run.csv'):
+        #     os.remove('logs/best_individuals_pr_run.csv')
 
         # INITIALIZE ENVIRONMENT with enemy
         env = initialize_environment(enemy)
@@ -53,13 +48,15 @@ def main_function():
 
             average_fitness_pr_gen = np.array([])
             best_fitness_pr_gen = np.array([])
-            best_inds_pr_gen = np.array([])
+            best_inds_pr_gen = np.zeros((no_of_runs, global_genome_size))
+            best_fitness = -1
             for run in range(no_of_runs):  # /// 10-runs-loop start
                 print(f' -------- RUN {run+1} -------- ')
                 print('Initial stats: ')
 
                 # INITIALIZE POPULATION
-                population = initialize_population(10, 265)  # 150, 265
+                population = initialize_population(
+                    global_population_size, global_genome_size)  # 150, 256
                 genome_size = population.shape[1]
                 population_size = population.shape[0]
 
@@ -70,18 +67,23 @@ def main_function():
 
                     # best fitness curr generation
                     best_fitness_curr_gen = np.max(list_of_fitnesses)
-                    best_ind_idx = np.where(list_of_fitnesses ==
-                                            best_fitness_curr_gen)
-                    # best individual curr generation
-                    best_ind_curr_gen = population[best_ind_idx[0][0]]
                     # avg fitness curr generation
                     avg_fitness_curr_gen = np.mean(list_of_fitnesses)
+
+                    # check if best fitness this gen is better than the current best fitness
+                    if best_fitness_curr_gen > best_fitness:
+                        best_fitness = best_fitness_curr_gen
+
+                        # find individual with this fitness
+                        best_ind_idx = np.where(list_of_fitnesses ==
+                                                best_fitness)
+                        best_individual = population[best_ind_idx[0][0]]
+                        # save individual to list
+                        best_inds_pr_gen[run] = best_individual
 
                     # add to lists
                     best_fitness_pr_gen = np.append(
                         best_fitness_pr_gen, best_fitness_curr_gen)
-                    best_inds_pr_gen = np.append(
-                        best_inds_pr_gen, best_ind_curr_gen)
                     average_fitness_pr_gen = np.append(
                         average_fitness_pr_gen, avg_fitness_curr_gen)
                     # print('population size.:', population_size)
@@ -148,8 +150,8 @@ def main_function():
                         no_of_runs, no_of_generations)
                     best_fitness_pr_gen = best_fitness_pr_gen.reshape(
                         no_of_runs, no_of_generations)
-                    best_fitness_pr_gen = best_fitness_pr_gen.reshape(
-                        no_of_runs, no_of_generations)
+                    best_inds_pr_gen = best_inds_pr_gen.reshape(
+                        no_of_runs, genome_size)
 
                     f = open("logs/average_fitnesses_pr_run.csv", "a")
                     g = open("logs/best_fitnesses_pr_run.csv", "a")
@@ -164,17 +166,19 @@ def main_function():
             # /// 10-runs-loop finished
 
             # /// 10-best-indivudals-test-loop start
+
+            print('\n------- Testing top individuals against enemy ', enemy)
             for i in range(no_of_runs):
-                print('Testing top individuals against enemy %...', enemy)
+                print('------- Testing with top individual no. ', i+1)
 
-                # import pandas as pd
-                # best_individuals_csv = pd.read_csv('best_individuals_pr_run.csv')
-                # best_individuals = best_individuals_csv['']
+                path = 'logs/best_individuals_pr_run.csv'
+                best_inds_csv = pd.read_csv(
+                    path, delimiter=',', header=None)
+                best_inds_arr = best_inds_csv.to_numpy()
 
-                individual = best_inds_pr_run[i]
+                individual = best_inds_arr[i]
+
                 fitness_from_best_ind_runs = np.array([])
-                print('individual', individual)
-
                 # run five times
                 for j in range(5):
                     f, pl, el, t = env.play(pcont=individual)
