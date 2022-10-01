@@ -6,6 +6,7 @@ from fitness import fittest_solution
 from selection import tournament_selection
 import os
 import pandas as pd
+import random
 
 # Initialize DEAP
 toolbox = base.Toolbox()
@@ -105,8 +106,8 @@ def main_function():
 
                         ind1, ind2 = toolbox.crossover(
                             parent_ind_1, parent_ind_2)
-                        children = np.append(children, ind1)
-                        children = np.append(children, ind2)
+                        children = np.append(children, ind1, axis=0)
+                        children = np.append(children, ind2, axis=0)
 
                     children = children.reshape(population_size, genome_size)
                     # print('children no.:', children.shape[0])
@@ -117,19 +118,16 @@ def main_function():
                     for child in children:
                         # random number to compare with mutation_ratio
                         random_no = np.random.uniform(0, 1)
-
+                        print(child)
                         if(random_no < mutation_ratio):
-                            mutated_child = toolbox.mutate(child)
+                            mutated_child = toolbox.mutate(child)[0]
                             # add mutated child to mutated_children list
-                            mutated_children = np.append(
-                                mutated_children, mutated_child)
+                            mutated_children = np.append(mutated_children, mutated_child, axis=0)
                         else:
                             # add non-mutated child to mutated_children list
-                            mutated_children = np.append(
-                                mutated_children, child)
+                            mutated_children = np.append(mutated_children, child, axis=0)
 
-                    mutated_children = mutated_children.reshape(
-                        population_size, genome_size)
+                    mutated_children = mutated_children.reshape(population_size, genome_size)
                     # print('mutated no.:', mutated_children.shape[0])
 
                     # select for survival
@@ -137,10 +135,16 @@ def main_function():
                     # go to next generation
                     # For now, lets just replace the whole population.
                     # population = mutated_children # µ,λ
-                    population = np.concatenate((population, mutated_children)) # µ+λ
+                    # µ+λ
+                    
+                    
+                    random_number = random.randrange(50,100)
+                    rng = np.random.default_rng()
+                    population = rng.choice(population, size=random_number, replace=False)
+                    mutated_children = rng.choice(mutated_children, size=(150 - random_number), replace=False)
+                    population = np.append(population, mutated_children, axis=0)
                     population_size = population.shape[0]
                     population = population.reshape(population_size, genome_size)
-
                     # Print stats for current generation
                     print(
                         f'-------\nGeneration {generation} stats - Best: {best_fitness_curr_gen} Mean: {avg_fitness_curr_gen} Std: {np.std(list_of_fitnesses)}')
