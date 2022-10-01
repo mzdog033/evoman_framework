@@ -11,10 +11,10 @@ import numpy
 import pygame
 from pygame.locals import *
 import struct
-import tmx
+from evoman import tmx
 
-from player import *
-from controller import Controller
+from evoman.player import *
+from evoman.controller import Controller
 
 
 # main class
