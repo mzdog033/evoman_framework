@@ -1,2 +1,5 @@
 __pycache__/
 .idea/
+evoman/
+logs/
+individual_demo/
