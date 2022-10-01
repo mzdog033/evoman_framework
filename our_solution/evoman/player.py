@@ -9,7 +9,7 @@ import numpy
 import struct
 import binascii
 
-from evoman import Base
+import evoman.Base
 from evoman.Base.SpriteConstants import *
 from evoman.Base.SpriteDefinition import *
 from evoman.sensors import *
@@ -17,7 +17,6 @@ from evoman.sensors import *
 
 # player proctile
 class Bullet_p(pygame.sprite.Sprite):
-
 
     image = pygame.image.load('evoman/images/bullet_r.png')
 
@@ -34,17 +33,16 @@ class Bullet_p(pygame.sprite.Sprite):
         else:
             self.image = pygame.image.load('evoman/images/bullet_l.png')
 
-
-
     def update(self, dt, game):
 
         # removes bullets objetcs when they transpass the screen limits
-        if self.rect.right<1 or self.rect.left>736 or  self.rect.top <1 or self.rect.bottom>512 :
+        if self.rect.right < 1 or self.rect.left > 736 or self.rect.top < 1 or self.rect.bottom > 512:
             self.kill()
             game.player.twists[self.n_twist] = None
             return
 
-        self.rect.x += self.direction * 600 * dt    # moving on the X axis (left or tight). It adds 600*dt forward at each general game loop loop iteration, where dt controls the frames limit.
+        # moving on the X axis (left or tight). It adds 600*dt forward at each general game loop loop iteration, where dt controls the frames limit.
+        self.rect.x += self.direction * 600 * dt
 
         # checks collision of player's bullet with the enemy
         if self.rect.colliderect(game.enemy.rect):
@@ -58,7 +56,6 @@ class Bullet_p(pygame.sprite.Sprite):
                     # makes enemy imune to player's shooting.
                     game.enemy.imune = 1
 
-
             # removes the bullet off the screen after collision.
             self.kill()
             game.player.twists[self.n_twist] = None
@@ -66,18 +63,14 @@ class Bullet_p(pygame.sprite.Sprite):
             game.enemy.hurt = 5
 
 
-
-
 # player sprite
 class Player(pygame.sprite.Sprite):
-
-
 
     def __init__(self, location, enemyn, level, *groups):
         super(Player, self).__init__(*groups)
 
-
-        self.spriteDefinition = SpriteDefinition('evoman/images/EvoManSprites.png', 0, 0, 43, 59)
+        self.spriteDefinition = SpriteDefinition(
+            'evoman/images/EvoManSprites.png', 0, 0, 43, 59)
         self.updateSprite(SpriteConstants.STANDING, SpriteConstants.RIGHT)
 
         self.rect = pygame.rect.Rect(location, self.image.get_size())
@@ -98,13 +91,10 @@ class Player(pygame.sprite.Sprite):
         self.hy = 0
         self.sensors = None
 
-
-
     def update(self, dt, game):
 
-
         # if the enemies are not atacking with the freezing atack (prevents player from making any movements or atacking) and also the 'start game' marker is 1.
-        if game.freeze_p == 0  and game.start == 1:
+        if game.freeze_p == 0 and game.start == 1:
 
             # checks water environment flag to regulate movements speed
             if self.inwater == 1:
@@ -118,7 +108,7 @@ class Player(pygame.sprite.Sprite):
 
             # defines game mode for player action
 
-            if game.playermode == 'human': # player controlled by keyboard/joystick
+            if game.playermode == 'human':  # player controlled by keyboard/joystick
 
                 # if joystick is connected, initializes it.
                 if game.joy > 0:
@@ -130,7 +120,7 @@ class Player(pygame.sprite.Sprite):
 
                 press = 0
                 release = 0
-                for event in  game.event:
+                for event in game.event:
                     if event.type == pygame.JOYBUTTONDOWN or event.type == pygame.KEYDOWN:
                         press = 1
                     else:
@@ -157,13 +147,13 @@ class Player(pygame.sprite.Sprite):
                     if round(joystick.get_axis(0)) == 1:
                         right = 1
                 if key[pygame.K_RIGHT]:
-                    right  = 1
+                    right = 1
 
                 # gets joystick/key value for jumping
                 jump = 0
                 if game.joy > 0:
                     if int(joystick.get_button(2)) == 1 and press == 1:
-                            jump = 1
+                        jump = 1
                 if key[pygame.K_SPACE] and press == 1:
                     jump = 1
 
@@ -171,17 +161,18 @@ class Player(pygame.sprite.Sprite):
                 shoot = 0
                 if game.joy > 0:
                     if int(joystick.get_button(3)) == 1 and press == 1:
-                            shoot = 1
+                        shoot = 1
                 if key[pygame.K_LSHIFT] and press == 1:
                     shoot = 1
 
-            elif game.playermode == 'ai': # player controlled by AI algorithm
-
+            elif game.playermode == 'ai':  # player controlled by AI algorithm
 
                 # calls the controller providing game sensors
-                actions = game.player_controller.control(self.sensors.get(game), game.pcont)
+                actions = game.player_controller.control(
+                    self.sensors.get(game), game.pcont)
                 if len(actions) < 5:
-                    game.print_logs("ERROR: Player controller must return 5 decision variables.")
+                    game.print_logs(
+                        "ERROR: Player controller must return 5 decision variables.")
                     sys.exit(0)
 
                 left = actions[0]
@@ -205,11 +196,14 @@ class Player(pygame.sprite.Sprite):
 
                 # animation, running images alternation
                 if self.alternate == 1:
-                    self.updateSprite(SpriteConstants.START_RUNNING, SpriteConstants.LEFT)
+                    self.updateSprite(
+                        SpriteConstants.START_RUNNING, SpriteConstants.LEFT)
                 if self.alternate == 4 or self.alternate == 10:
-                    self.updateSprite(SpriteConstants.RUNNING_STEP1, SpriteConstants.LEFT)
+                    self.updateSprite(
+                        SpriteConstants.RUNNING_STEP1, SpriteConstants.LEFT)
                 if self.alternate == 7:
-                    self.updateSprite(SpriteConstants.RUNNING_STEP2, SpriteConstants.LEFT)
+                    self.updateSprite(
+                        SpriteConstants.RUNNING_STEP2, SpriteConstants.LEFT)
 
                 self.alternate += 1
                 if self.alternate > 12:
@@ -223,42 +217,47 @@ class Player(pygame.sprite.Sprite):
 
                 # animation, running player images alternation
                 if self.alternate == 1:
-                    self.updateSprite(SpriteConstants.START_RUNNING, SpriteConstants.RIGHT)
+                    self.updateSprite(
+                        SpriteConstants.START_RUNNING, SpriteConstants.RIGHT)
                 if self.alternate == 4 or self.alternate == 10:
-                    self.updateSprite(SpriteConstants.RUNNING_STEP1, SpriteConstants.RIGHT)
+                    self.updateSprite(
+                        SpriteConstants.RUNNING_STEP1, SpriteConstants.RIGHT)
                 if self.alternate == 7:
-                    self.updateSprite(SpriteConstants.RUNNING_STEP2, SpriteConstants.RIGHT)
+                    self.updateSprite(
+                        SpriteConstants.RUNNING_STEP2, SpriteConstants.RIGHT)
 
                 self.alternate += 1
                 if self.alternate > 12:
                     self.alternate = 1
 
-
             else:
                 # animation, standing up images
                 if self.direction == -1:
-                    self.updateSprite(SpriteConstants.STANDING, SpriteConstants.LEFT)
+                    self.updateSprite(SpriteConstants.STANDING,
+                                      SpriteConstants.LEFT)
                 else:
-                    self.updateSprite(SpriteConstants.STANDING, SpriteConstants.RIGHT)
-
+                    self.updateSprite(SpriteConstants.STANDING,
+                                      SpriteConstants.RIGHT)
 
             # if player is touching the floor, he is allowed to jump
-            if  self.resting == 1  and jump == 1:
-                    self.dy =  self.hy
+            if self.resting == 1 and jump == 1:
+                self.dy = self.hy
 
             # gravity
             self.dy = min(400, self.dy + 100)
             self.rect.y += self.dy * dt * self.vy
 
             #  changes the image when player jumps
-            if self.resting == 0 :
+            if self.resting == 0:
                 if self.direction == -1:
-                    self.updateSprite(SpriteConstants.JUMPING, SpriteConstants.LEFT)
+                    self.updateSprite(SpriteConstants.JUMPING,
+                                      SpriteConstants.LEFT)
                 else:
-                    self.updateSprite(SpriteConstants.JUMPING, SpriteConstants.RIGHT)
+                    self.updateSprite(SpriteConstants.JUMPING,
+                                      SpriteConstants.RIGHT)
 
-
-            new = self.rect # copies new (after movement) position state of the player
+            # copies new (after movement) position state of the player
+            new = self.rect
 
             # controls screen walls and platforms limits agaist player
             self.resting = 0
@@ -266,14 +265,14 @@ class Player(pygame.sprite.Sprite):
 
                 blockers = cell['blockers']
 
-                if 'l' in blockers and last.right <= cell.left and new.right > cell.left and last.bottom>cell.top:
+                if 'l' in blockers and last.right <= cell.left and new.right > cell.left and last.bottom > cell.top:
                     new.right = cell.left
 
-                if 'r' in blockers and last.left >= cell.right and new.left < cell.right and last.bottom>cell.top:
+                if 'r' in blockers and last.left >= cell.right and new.left < cell.right and last.bottom > cell.top:
                     new.left = cell.right
 
                 if 't' in blockers and last.bottom <= cell.top and new.bottom > cell.top:
-                    self.resting = 1 # player touches the floor
+                    self.resting = 1  # player touches the floor
                     new.bottom = cell.top
                     self.dy = 0
 
@@ -281,20 +280,21 @@ class Player(pygame.sprite.Sprite):
                     new.top = cell.bottom
 
             # shoots, limiting time between bullets.
-            if  shoot == 1 and not self.gun_cooldown:
+            if shoot == 1 and not self.gun_cooldown:
 
                 self.shooting = 5
-                self.atacked = 1 # marks if the player has atacked enemy
-
+                self.atacked = 1  # marks if the player has atacked enemy
 
                 # creates bullets objects according to the direction.
                 if self.direction > 0:
-                    self.twists.append(Bullet_p(self.rect.midright, 1, len(self.twists), game.sprite_p))
+                    self.twists.append(
+                        Bullet_p(self.rect.midright, 1, len(self.twists), game.sprite_p))
 
                 else:
-                     self.twists.append(Bullet_p(self.rect.midleft, -1, len(self.twists), game.sprite_p))
+                    self.twists.append(
+                        Bullet_p(self.rect.midleft, -1, len(self.twists), game.sprite_p))
 
-                self.gun_cooldown = 0.4 # marks time to the bullet for allowing next bullets
+                self.gun_cooldown = 0.4  # marks time to the bullet for allowing next bullets
 
                 # sound effects
                 if game.sound == "on" and game.playermode == "human":
@@ -306,35 +306,39 @@ class Player(pygame.sprite.Sprite):
             else:
                 self.atacked = 0
 
-
-
             # decreases time for limitating bullets
             self.gun_cooldown = max(0, self.gun_cooldown - dt)
 
             # hurt player animation
             if self.hurt > 0:
                 if self.direction == -1:
-                    self.updateSprite(SpriteConstants.HURTING, SpriteConstants.LEFT)
+                    self.updateSprite(SpriteConstants.HURTING,
+                                      SpriteConstants.LEFT)
                 else:
-                    self.updateSprite(SpriteConstants.HURTING, SpriteConstants.RIGHT)
+                    self.updateSprite(SpriteConstants.HURTING,
+                                      SpriteConstants.RIGHT)
 
             self.hurt -= 1
-            self.hurt = max(0,self.hurt)
+            self.hurt = max(0, self.hurt)
             self.shooting -= 1
-            self.shooting = max(0,self.shooting)
+            self.shooting = max(0, self.shooting)
 
             # shooting animation
             if self.shooting > 0:
                 if self.resting == 0:
                     if self.direction == -1:
-                        self.updateSprite(SpriteConstants.SHOOTING_JUMPING, SpriteConstants.LEFT)
+                        self.updateSprite(
+                            SpriteConstants.SHOOTING_JUMPING, SpriteConstants.LEFT)
                     else:
-                        self.updateSprite(SpriteConstants.SHOOTING_JUMPING, SpriteConstants.RIGHT)
+                        self.updateSprite(
+                            SpriteConstants.SHOOTING_JUMPING, SpriteConstants.RIGHT)
                 else:
                     if self.direction == -1:
-                        self.updateSprite(SpriteConstants.SHOOTING, SpriteConstants.LEFT)
+                        self.updateSprite(
+                            SpriteConstants.SHOOTING, SpriteConstants.LEFT)
                     else:
-                        self.updateSprite(SpriteConstants.SHOOTING, SpriteConstants.RIGHT)
+                        self.updateSprite(
+                            SpriteConstants.SHOOTING, SpriteConstants.RIGHT)
 
             # kills player in case he touches killers stuff, like spikes.
             for cell in game.tilemap.layers['triggers'].collide(self.rect, 'killers'):
@@ -344,8 +348,6 @@ class Player(pygame.sprite.Sprite):
             game.tilemap.set_focus(new.x, new.y)
         else:
             game.tilemap.set_focus(self.rect.x, self.rect.y)
-
-
 
     def updateSprite(self, state, direction):
         self.image = self.spriteDefinition.getImage(state, direction)
