@@ -48,14 +48,16 @@ def box_plot(performance1, performance2, enemy_id):
 
 enemies = [1,2,3]
 generations = 20
+runs = 10
+runs = runs - 1
 filepath = './logs/'
 
 for enemy in enemies:
-    avg_comma = np.genfromtxt(filepath+'µcommaλaverage_fitnesses_pr_run9of enemy'+str(enemy)+'.csv', delimiter=",")
-    best_comma = np.genfromtxt(filepath+'µcommaλbest_fitnesses_pr_run9of enemy'+str(enemy)+'.csv', delimiter=",")
+    avg_comma = np.genfromtxt(filepath+'µcommaλaverage_fitnesses_pr_run'+str(runs)+'of enemy'+str(enemy)+'.csv', delimiter=",")
+    best_comma = np.genfromtxt(filepath+'µcommaλbest_fitnesses_pr_run'+str(runs)+'of enemy'+str(enemy)+'.csv', delimiter=",")
 
-    avg_plus = np.genfromtxt(filepath+'µplusλaverage_fitnesses_pr_run9of enemy'+str(enemy)+'.csv', delimiter=",")
-    best_plus = np.genfromtxt(filepath+'µplusλbest_fitnesses_pr_run9of enemy'+str(enemy)+'.csv', delimiter=",")
+    avg_plus = np.genfromtxt(filepath+'µplusλaverage_fitnesses_pr_run'+str(runs)+'of enemy'+str(enemy)+'.csv', delimiter=",")
+    best_plus = np.genfromtxt(filepath+'µplusλbest_fitnesses_pr_run'+str(runs)+'of enemy'+str(enemy)+'.csv', delimiter=",")
 
     line_plot(avg_comma.flatten(), best_comma.flatten(), generations, enemy, 'µcommaλ')
     line_plot(avg_plus.flatten(), best_plus.flatten(), generations, enemy, 'µcommaλ')

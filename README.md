@@ -1,11 +1,22 @@
-# evoman_framework
-Evoman is a video game playing framework to be used as a testbed for optimization algorithms.
-
-A demo can be found here:  https://www.youtube.com/watch?v=ZqaMjd1E4ZI
-
-Steps to get it to run:
+### Installing dependant libraries:
 ```
-git clone https://github.com/mzdog033/evoman_framework.git
 python -m pip install -U pygame --user
-pip install numpy
+pip install numpy tmx scipy matplotlib random pandas
+pip uninstall tmx
+```
+We uninstall tmx since the local tmx in evoman folder is sufficient for the run.
+### Running µ,λ survivor seletion. 
+Open a terminal and run the following line
+```
+python muCommaLambda.py
+```
+### Running µ+λ survivor seletion. 
+Open a terminal and run the following line
+```
+python muPlusLambda.py
+```
+### Plotting
+Once the statistics from both runs are available, run the plotter
+```
+python plotter.py
 ```

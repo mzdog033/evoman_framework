@@ -32,20 +32,10 @@ def main_function():
 
     best_solution_per_Enemy = np.array([])
     for enemy in range(1, 4):  # /// 3-Enemies-loop start
-        # check if files exist MAKE FOR EACH ENEMEY!!!!!!!!!!!!
-        # if os.path.exists('./logs/average_fitnesses_pr_run.csv'):
-        #     os.remove('./logs/average_fitnesses_pr_run.csv')
-        # if os.path.exists('./logs/best_fitnesses_pr_run.csv'):
-        #     os.remove('./logs/best_fitnesses_pr_run.csv')
-        # if os.path.exists('./logs/best_individuals_pr_run.csv'):
-        #     os.remove('./logs/best_individuals_pr_run.csv')
-
         # INITIALIZE ENVIRONMENT with enemy
         env = initialize_environment(enemy)
 
         for EA in range(1):  # /// 2-EAs-loop start
-            #  Replace range with EA list
-
             average_fitness_pr_gen = np.array([])
             best_fitness_pr_gen = np.array([])
             best_inds_pr_gen = np.zeros((no_of_runs, global_genome_size))
@@ -130,13 +120,8 @@ def main_function():
 
                     mutated_children = mutated_children.reshape(
                         population_size, genome_size)
-                    # print('mutated no.:', mutated_children.shape[0])
 
                     # select for survival
-
-                    # go to next generation
-                    # For now, lets just replace the whole population.
-                    # population = mutated_children # µ,λ
                     population = np.concatenate((population, mutated_children)) # µ+λ
                     population_size = population.shape[0]
                     population = population.reshape(population_size, genome_size)
@@ -197,8 +182,6 @@ def main_function():
                     f'Best solution for enemy {enemy}:d {best_solution_per_Enemy[enemy-1]}')
 
                 # /// 10-best-indivudals-test-loop finished
-
-                # do the same thing for the next experiment: with the other selection mechanism
 
         # /// 2-EAs-loop finished
 

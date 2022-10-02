@@ -12,12 +12,10 @@ toolbox = base.Toolbox()
 
 toolbox = base.Toolbox()
 toolbox.register("crossover", tools.cxTwoPoint)
-# Gaussian Mutation - WHY THESE PARAMETERS?
 global_genome_size = 265
 mutation_ratio = 0.2
 toolbox.register("mutate", tools.mutGaussian, mu=0,
                  sigma=1, indpb=0.1)
-# toolbox.register("evaluate", toolbox.evaluate)  # what does this do
 global_population_size = 150
 no_of_runs = 10
 no_of_generations = 20
@@ -25,27 +23,12 @@ k_tournament_size = 2
 
 
 def main_function():
-
-    # FIX ISSUE IN ENVIRONMENT WITH PADDED ZEROS
-
-    #
-
     best_solution_per_Enemy = np.array([])
     for enemy in range(1, 4):  # /// 3-Enemies-loop start
-        # check if files exist MAKE FOR EACH ENEMEY!!!!!!!!!!!!
-        # if os.path.exists('logs/average_fitnesses_pr_run.csv'):
-        #     os.remove('logs/average_fitnesses_pr_run.csv')
-        # if os.path.exists('logs/best_fitnesses_pr_run.csv'):
-        #     os.remove('logs/best_fitnesses_pr_run.csv')
-        # if os.path.exists('logs/best_individuals_pr_run.csv'):
-        #     os.remove('logs/best_individuals_pr_run.csv')
-
         # INITIALIZE ENVIRONMENT with enemy
         env = initialize_environment(enemy)
 
         for EA in range(1):  # /// 2-EAs-loop start
-            #  Replace range with EA list
-
             average_fitness_pr_gen = np.array([])
             best_fitness_pr_gen = np.array([])
             best_inds_pr_gen = np.zeros((no_of_runs, global_genome_size))
@@ -133,11 +116,7 @@ def main_function():
                     # print('mutated no.:', mutated_children.shape[0])
 
                     # select for survival
-
-                    # go to next generation
-                    # For now, lets just replace the whole population.
                     population = mutated_children # µ,λ
-                    # population = np.append(population, mutated_children) # µ+λ
 
                     # Print stats for current generation
                     print(
@@ -193,8 +172,6 @@ def main_function():
                     f'Best solution for enemy {enemy}:d {best_solution_per_Enemy[enemy-1]}')
 
                 # /// 10-best-indivudals-test-loop finished
-
-                # do the same thing for the next experiment: with the other selection mechanism
 
         # /// 2-EAs-loop finished
 
