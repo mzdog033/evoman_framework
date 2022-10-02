@@ -18,9 +18,9 @@ mutation_ratio = 0.2
 toolbox.register("mutate", tools.mutGaussian, mu=0,
                  sigma=1, indpb=0.1)
 # toolbox.register("evaluate", toolbox.evaluate)  # what does this do
-global_population_size = 150
-no_of_runs = 10
-no_of_generations = 20
+global_population_size = 10
+no_of_runs = 1
+no_of_generations = 2
 k_tournament_size = 2
 
 
@@ -142,9 +142,9 @@ def main_function():
                     best_inds_pr_gen = best_inds_pr_gen.reshape(
                         no_of_runs, genome_size)
 
-                f = open("./logs/µplusλaverage_fitnesses_pr_run"+str(run)+"of enemy"+str(enemy)+".csv", "a")
-                g = open("./logs/µplusλbest_fitnesses_pr_run"+str(run)+"of enemy"+str(enemy)+".csv", "a")
-                h = open("./logs/µplusλbest_individuals_pr_run"+str(run)+"of enemy"+str(enemy)+".csv", "a")
+                f = open("./logs/rss_average_fitnesses_pr_run"+str(run)+"of enemy"+str(enemy)+".csv", "a")
+                g = open("./logs/rss_best_fitnesses_pr_run"+str(run)+"of enemy"+str(enemy)+".csv", "a")
+                h = open("./logs/rss_best_individuals_pr_run"+str(run)+"of enemy"+str(enemy)+".csv", "a")
                 np.savetxt(f, average_fitness_pr_gen, delimiter=',')
                 np.savetxt(g, best_fitness_pr_gen, delimiter=',')
                 np.savetxt(h, best_inds_pr_gen, delimiter=',')
@@ -160,7 +160,7 @@ def main_function():
             for i in range(no_of_runs):
                 print('------- Testing with top individual no. ', i+1)
 
-                path = './logs/µplusλbest_individuals_pr_run'+str(i)+'of enemy'+str(enemy)+'.csv'
+                path = './logs/rss_best_individuals_pr_run'+str(i)+'of enemy'+str(enemy)+'.csv'
                 best_inds_csv = pd.read_csv(
                     path, delimiter=',', header=None)
                 best_inds_arr = best_inds_csv.to_numpy()

@@ -10,10 +10,10 @@ Open a terminal and run the following line
 ```
 python muCommaLambda.py
 ```
-### Running µ+λ survivor seletion. 
+### Running Random-Stochastic survivor seletion. 
 Open a terminal and run the following line
 ```
-python muPlusLambda.py
+python rss.py
 ```
 ### Plotting
 Once the statistics from both runs are available, run the plotter
