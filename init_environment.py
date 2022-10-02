@@ -8,8 +8,6 @@ sys.path.insert(0, 'evoman')
 
 
 def initialize_environment(enemy_id):
-    # headless = True
-    # if headless:
     os.environ["SDL_VIDEODRIVER"] = "dummy"
 
     experiment_name = 'individual_demo'

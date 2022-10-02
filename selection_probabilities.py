@@ -2,11 +2,6 @@ import numpy as np
 
 
 def selection_probabilities(generation, fitness_function: callable, sigma_scaling=False) -> list:
-    '''
-    Calculates the individual selection probabilities based on the fitness function. 
-    Applies sigma-scaling if desired.
-    '''
-
     number_individuals = generation.shape[0]
     total_fitness = np.sum([fitness_function(generation[i])
                            for i in range(number_individuals)])

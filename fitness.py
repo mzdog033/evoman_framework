@@ -11,10 +11,6 @@ def fittest_solution(population, env):
         fitness = simulation(env, individual)
 
         list_of_fitnesses = np.append(list_of_fitnesses, fitness)
-
-    # best_fitness = np.max(list_of_fitnesses)  # one-max method: using np.max
-
-    # return list of all fitnesses in the population, and the best fitness in that list
     return list_of_fitnesses
 
 
