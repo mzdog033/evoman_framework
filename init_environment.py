@@ -7,20 +7,21 @@ import sys
 sys.path.insert(0, 'evoman')
 
 
-def initialize_environment(enemy_id):
+def initialize_environment(enemies_list):
     # headless = True
     # if headless:
-    os.environ["SDL_VIDEODRIVER"] = "dummy"
+    # os.environ["SDL_VIDEODRIVER"] = "dummy"
 
-    experiment_name = 'individual_demo'
+    experiment_name = 'multimode_demo'
     if not os.path.exists(experiment_name):
         os.makedirs(experiment_name)
 
     n_hidden_neurons = 10
 
     env = Environment(experiment_name=experiment_name,
-                      enemies=[enemy_id],
+                      enemies=enemies_list,
                       playermode="ai",
+                      multiplemode='yes',
                       player_controller=player_controller(n_hidden_neurons),
                       enemymode="static",
                       level=2,

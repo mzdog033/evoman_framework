@@ -1,10 +1,10 @@
 # the demo_controller file contains standard controller structures for the agents.
-# you can overwrite the method 'control' in your own instance of the evoman.environment
+# you can overwrite the method 'control' in your own instance of the environment
 # and then use a different type of controller if you wish.
-# note that the param 'controller' received by 'control' is provided through evoman.environment.play(pcont=x)
+# note that the param 'controller' received by 'control' is provided through environment.play(pcont=x)
 # 'controller' could contain either weights to be used in the standard controller (or other controller implemented),
 # or even a full network structure (ex.: from NEAT).
-from evoman.controller import Controller
+from controller import Controller
 import numpy as np
 
 
@@ -24,17 +24,6 @@ class player_controller(Controller):
 
         if self.n_hidden[0] > 0:
             # Preparing the weights and biases from the controller of layer 1
-
-            # sometimes controller is suddenly int, and cant be processed as it should
-            # put the number in an array and pad with zeroes i guess
-            # if type(controller) == type(1):
-            #     # print('controller is int?!', controller)
-            #     zeros_array = np.zeros(265)
-            #     zeros_array[0] = controller
-            #     controller = zeros_array
-            # else:
-            #     print(
-            #         'controller is NOT int?! Its actually an array of length', len(controller))
 
             # Biases for the n hidden neurons
             bias1 = controller[:self.n_hidden[0]].reshape(1, self.n_hidden[0])

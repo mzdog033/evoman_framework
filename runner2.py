@@ -4,13 +4,11 @@ from init_environment import initialize_environment
 from init_population import initialize_population
 from fitness import fittest_solution
 from selection import tournament_selection
-import os
 import pandas as pd
 
 # Initialize DEAP
 toolbox = base.Toolbox()
 
-toolbox = base.Toolbox()
 toolbox.register("crossover", tools.cxTwoPoint)
 # Gaussian Mutation - WHY THESE PARAMETERS?
 global_genome_size = 265
@@ -18,9 +16,9 @@ mutation_ratio = 0.2
 toolbox.register("mutate", tools.mutGaussian, mu=0,
                  sigma=1, indpb=0.1)
 # toolbox.register("evaluate", toolbox.evaluate)  # what does this do
-global_population_size = 150
-no_of_runs = 10
-no_of_generations = 20
+global_population_size = 10
+no_of_runs = 2
+no_of_generations = 3
 k_tournament_size = 2
 
 
@@ -28,20 +26,13 @@ def main_function():
 
     # FIX ISSUE IN ENVIRONMENT WITH PADDED ZEROS
 
-    #
-
     best_solution_per_Enemy = np.array([])
-    for enemy in range(1, 4):  # /// 3-Enemies-loop start
-        # check if files exist MAKE FOR EACH ENEMEY!!!!!!!!!!!!
-        # if os.path.exists('logs/average_fitnesses_pr_run.csv'):
-        #     os.remove('logs/average_fitnesses_pr_run.csv')
-        # if os.path.exists('logs/best_fitnesses_pr_run.csv'):
-        #     os.remove('logs/best_fitnesses_pr_run.csv')
-        # if os.path.exists('logs/best_individuals_pr_run.csv'):
-        #     os.remove('logs/best_individuals_pr_run.csv')
+    for enemy in range(1):  # /// 3-Enemies-loop start
 
         # INITIALIZE ENVIRONMENT with enemy
-        env = initialize_environment(enemy)
+        enemies = np.array([1, 2, 3])
+        env = initialize_environment(enemies)
+        # env.update_parameter('speed')
 
         for EA in range(1):  # /// 2-EAs-loop start
             #  Replace range with EA list
@@ -136,7 +127,7 @@ def main_function():
 
                     # go to next generation
                     # For now, lets just replace the whole population.
-                    population = mutated_children # µ,λ
+                    population = mutated_children  # µ,λ
                     # population = np.append(population, mutated_children) # µ+λ
 
                     # Print stats for current generation
@@ -154,9 +145,12 @@ def main_function():
                     best_inds_pr_gen = best_inds_pr_gen.reshape(
                         no_of_runs, genome_size)
 
-                f = open("./logs/µcommaλaverage_fitnesses_pr_run"+str(run)+".csv", "a")
-                g = open("./logs/µcommaλbest_fitnesses_pr_run"+str(run)+".csv", "a")
-                h = open("./logs/µcommaλbest_individuals_pr_run"+str(run)+".csv", "a")
+                f = open("./logs/µcommaλaverage_fitnesses_pr_run" +
+                         str(run)+".csv", "a")
+                g = open("./logs/µcommaλbest_fitnesses_pr_run" +
+                         str(run)+".csv", "a")
+                h = open("./logs/µcommaλbest_individuals_pr_run" +
+                         str(run)+".csv", "a")
                 np.savetxt(f, average_fitness_pr_gen, delimiter=',')
                 np.savetxt(g, best_fitness_pr_gen, delimiter=',')
                 np.savetxt(h, best_inds_pr_gen, delimiter=',')
@@ -168,7 +162,7 @@ def main_function():
 
             # /// 10-best-indivudals-test-loop start
 
-            print('\n------- Testing top individuals against enemy ', enemy)
+            print('\n------- Testing top individuals against enemy group of', enemies)
             for i in range(no_of_runs):
                 print('------- Testing with top individual no. ', i+1)
 
@@ -177,11 +171,15 @@ def main_function():
                     path, delimiter=',', header=None)
                 best_inds_arr = best_inds_csv.to_numpy()
 
+                # test 10 best solutions against several enemies innit? The same group of enemies
+
                 individual = best_inds_arr[i]
 
                 fitness_from_best_ind_runs = np.array([])
                 # run five times
                 for j in range(5):
+                    # for en in [1, 2]:
+                    # env.update_parameter('enemies', [en])
                     f, pl, el, t = env.play(pcont=individual)
 
                     fitness_from_best_ind_runs = np.append(
@@ -190,7 +188,7 @@ def main_function():
                 best_solution_per_Enemy = np.append(
                     best_solution_per_Enemy, np.mean(fitness_from_best_ind_runs))
                 print(
-                    f'Best solution for enemy {enemy}:d {best_solution_per_Enemy[enemy-1]}')
+                    f'Best solution for enemy group {enemies}: {best_solution_per_Enemy[i]}')
 
                 # /// 10-best-indivudals-test-loop finished
 
