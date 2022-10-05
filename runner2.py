@@ -188,7 +188,7 @@ def main_function():
                 best_solution_per_Enemy = np.append(
                     best_solution_per_Enemy, np.mean(fitness_from_best_ind_runs))
                 print(
-                    f'Best solution for enemy group {enemies}: {best_solution_per_Enemy[i]}')
+                    f'Average solution for enemy group {enemies}, run {i}: {best_solution_per_Enemy[i]}')
 
                 # /// 10-best-indivudals-test-loop finished
 
