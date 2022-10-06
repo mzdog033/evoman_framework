@@ -9,6 +9,9 @@ def play_top_ten(enemies, no_of_runs, enemy, env):
           enemies[enemy])
     average_solution_per_enemyset = np.array([])
 
+    # initialize environment again
+    enemies_list = [1, 2, 3, 4, 5, 6, 7, 8]
+
     for run in range(no_of_runs):
         print('------- Testing with top individual no. ', run+1)
 
@@ -24,7 +27,9 @@ def play_top_ten(enemies, no_of_runs, enemy, env):
         fitness_from_best_ind_runs = np.array([])
         # run five times
         for j in range(5):
-            # test each of the top 10 individuals against each set of enemies
+            # test each of the top 10 individuals against all the enemies
+
+            env.update_parameter('enemies', enemies_list)
             f, pl, el, t = env.play(pcont=individual)
 
             fitness_from_best_ind_runs = np.append(
@@ -34,6 +39,6 @@ def play_top_ten(enemies, no_of_runs, enemy, env):
         average_solution_per_enemyset = np.append(
             average_solution_per_enemyset, np.mean(fitness_from_best_ind_runs))
         print(
-            f'Average solution for enemy group {enemies[enemy]}, run {run+1}: {average_solution_per_enemyset[run]}')
+            f'Average solution for enemy group all enemies, run {run+1}: {average_solution_per_enemyset[run]}')
 
     return average_solution_per_enemyset

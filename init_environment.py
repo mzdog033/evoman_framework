@@ -25,5 +25,6 @@ def initialize_environment(enemies_list):
                       player_controller=player_controller(n_hidden_neurons),
                       enemymode="static",
                       level=2,
-                      speed="fastest")
+                      speed="fastest",
+                      randomini="yes")
     return env

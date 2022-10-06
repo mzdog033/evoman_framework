@@ -15,19 +15,19 @@ global_genome_size = 265
 mutation_ratio = 0.2
 toolbox.register("mutate", tools.mutGaussian, mu=0,
                  sigma=1, indpb=0.1)
-global_population_size = 10
+global_population_size = 6
 no_of_runs = 1
-no_of_generations = 3
+no_of_generations = 2
 k_tournament_size = 2
 np.random.seed(420)  # why 420? copied form optimization_generalist_demo.py
 
 
 def main_function():
     average_solution_per_enemyset = np.array([])
-    for enemy in range(2):  # /// 3-Enemies-loop start
+    for enemy in range(1):  # /// 3-Enemies-loop start
 
         # INITIALIZE ENVIRONMENT with sets of enemies
-        enemies = np.array([[1, 5], [3, 8]])
+        enemies = np.array([[6, 4]])
         env = initialize_environment(enemies[enemy])
 
         for EA in range(1):  # /// 2-EAs-loop start
