@@ -5,8 +5,9 @@ import pandas as pd
 
 def play_top_ten(enemies, no_of_runs, enemy, env):
 
-    print('\n------- Testing top individuals against enemy group of', enemies)
-    best_solution_per_Enemy = np.array([])
+    print('\n------- Testing top individuals against enemy group of',
+          enemies[enemy])
+    average_solution_per_enemyset = np.array([])
 
     for run in range(no_of_runs):
         print('------- Testing with top individual no. ', run+1)
@@ -29,9 +30,10 @@ def play_top_ten(enemies, no_of_runs, enemy, env):
             fitness_from_best_ind_runs = np.append(
                 fitness_from_best_ind_runs, f)
 
-        best_solution_per_Enemy = np.append(
-            best_solution_per_Enemy, np.mean(fitness_from_best_ind_runs))
+        print('fitness from best individuals', fitness_from_best_ind_runs)
+        average_solution_per_enemyset = np.append(
+            average_solution_per_enemyset, np.mean(fitness_from_best_ind_runs))
         print(
-            f'Average solution for enemy group {enemies[enemy]}, run {run+1}: {best_solution_per_Enemy[run]}')
+            f'Average solution for enemy group {enemies[enemy]}, run {run+1}: {average_solution_per_enemyset[run]}')
 
-    return best_solution_per_Enemy
+    return average_solution_per_enemyset
