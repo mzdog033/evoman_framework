@@ -6,36 +6,31 @@ from fitness import fittest_solution
 from selection import tournament_selection
 import pandas as pd
 
+from testing_best_individuals import play_top_ten
+
 # Initialize DEAP
 toolbox = base.Toolbox()
-
 toolbox.register("crossover", tools.cxTwoPoint)
-# Gaussian Mutation - WHY THESE PARAMETERS?
 global_genome_size = 265
 mutation_ratio = 0.2
 toolbox.register("mutate", tools.mutGaussian, mu=0,
                  sigma=1, indpb=0.1)
-# toolbox.register("evaluate", toolbox.evaluate)  # what does this do
 global_population_size = 10
-no_of_runs = 2
+no_of_runs = 1
 no_of_generations = 3
 k_tournament_size = 2
+np.random.seed(420)  # why 420? copied form optimization_generalist_demo.py
 
 
 def main_function():
+    average_solution_per_enemyset = np.array([])
+    for enemy in range(2):  # /// 3-Enemies-loop start
 
-    # FIX ISSUE IN ENVIRONMENT WITH PADDED ZEROS
-
-    best_solution_per_Enemy = np.array([])
-    for enemy in range(1):  # /// 3-Enemies-loop start
-
-        # INITIALIZE ENVIRONMENT with enemy
-        enemies = np.array([1, 2, 3])
-        env = initialize_environment(enemies)
-        # env.update_parameter('speed')
+        # INITIALIZE ENVIRONMENT with sets of enemies
+        enemies = np.array([[1, 5], [3, 8]])
+        env = initialize_environment(enemies[enemy])
 
         for EA in range(1):  # /// 2-EAs-loop start
-            #  Replace range with EA list
 
             average_fitness_pr_gen = np.array([])
             best_fitness_pr_gen = np.array([])
@@ -53,7 +48,7 @@ def main_function():
 
                 # /// 20-generational-loop start
                 for generation in range(1, no_of_generations+1):
-                    #  fitness stuff
+                    #  get list of all fitnesses in the population
                     list_of_fitnesses = fittest_solution(population, env)
 
                     # best fitness curr generation
@@ -77,13 +72,11 @@ def main_function():
                         best_fitness_pr_gen, best_fitness_curr_gen)
                     average_fitness_pr_gen = np.append(
                         average_fitness_pr_gen, avg_fitness_curr_gen)
-                    # print('population size.:', population_size)
 
                     # PARENT SELECTION
                     selected_parents = tournament_selection(
                         population, list_of_fitnesses, k_tournament_size)  # selected_parents size (5 * 256)
                     parents_size = selected_parents.shape[0]
-                    # print('parents no.:', parents_size)
 
                     # CROSSOVER
                     children = np.array([])
@@ -100,7 +93,6 @@ def main_function():
                         children = np.append(children, ind2)
 
                     children = children.reshape(population_size, genome_size)
-                    # print('children no.:', children.shape[0])
 
                     # MUTATION
                     # choose a few children based on some probability "mutation_ratio"
@@ -121,14 +113,8 @@ def main_function():
 
                     mutated_children = mutated_children.reshape(
                         population_size, genome_size)
-                    # print('mutated no.:', mutated_children.shape[0])
 
-                    # select for survival
-
-                    # go to next generation
-                    # For now, lets just replace the whole population.
                     population = mutated_children  # µ,λ
-                    # population = np.append(population, mutated_children) # µ+λ
 
                     # Print stats for current generation
                     print(
@@ -146,11 +132,11 @@ def main_function():
                         no_of_runs, genome_size)
 
                 f = open("./logs/µcommaλaverage_fitnesses_pr_run" +
-                         str(run)+".csv", "a")
+                         str(run+1)+"_enemy_group_"+str(enemy+1)+".csv", "a")
                 g = open("./logs/µcommaλbest_fitnesses_pr_run" +
-                         str(run)+".csv", "a")
+                         str(run+1)+"_enemy_group_"+str(enemy+1)+".csv", "a")
                 h = open("./logs/µcommaλbest_individuals_pr_run" +
-                         str(run)+".csv", "a")
+                         str(run+1)+"_enemy_group_"+str(enemy+1)+".csv", "a")
                 np.savetxt(f, average_fitness_pr_gen, delimiter=',')
                 np.savetxt(g, best_fitness_pr_gen, delimiter=',')
                 np.savetxt(h, best_inds_pr_gen, delimiter=',')
@@ -162,37 +148,13 @@ def main_function():
 
             # /// 10-best-indivudals-test-loop start
 
-            print('\n------- Testing top individuals against enemy group of', enemies)
-            for i in range(no_of_runs):
-                print('------- Testing with top individual no. ', i+1)
+            average_solution_per_enemyset = play_top_ten(
+                enemies, no_of_runs, enemy, env)
+            print('best sol pr enemy-set array', average_solution_per_enemyset)
 
-                path = './logs/µcommaλbest_individuals_pr_run'+str(i)+'.csv'
-                best_inds_csv = pd.read_csv(
-                    path, delimiter=',', header=None)
-                best_inds_arr = best_inds_csv.to_numpy()
+            # /// 10-best-indivudals-test-loop finished
 
-                # test 10 best solutions against several enemies innit? The same group of enemies
-
-                individual = best_inds_arr[i]
-
-                fitness_from_best_ind_runs = np.array([])
-                # run five times
-                for j in range(5):
-                    # for en in [1, 2]:
-                    # env.update_parameter('enemies', [en])
-                    f, pl, el, t = env.play(pcont=individual)
-
-                    fitness_from_best_ind_runs = np.append(
-                        fitness_from_best_ind_runs, f)
-
-                best_solution_per_Enemy = np.append(
-                    best_solution_per_Enemy, np.mean(fitness_from_best_ind_runs))
-                print(
-                    f'Average solution for enemy group {enemies}, run {i}: {best_solution_per_Enemy[i]}')
-
-                # /// 10-best-indivudals-test-loop finished
-
-                # do the same thing for the next experiment: with the other selection mechanism
+            # do the same thing for the next experiment
 
         # /// 2-EAs-loop finished
 
