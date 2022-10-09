@@ -128,6 +128,7 @@ def main_function():
                     print('population + children',
                           population.shape[0], population.shape[1])
 
+                    # ROUND ROBIN TOURNAMENT SELECTION
                     print('round robin time')
                     round_robin_scores = np.array([])
                     individual_ids = np.arange(population_size)
