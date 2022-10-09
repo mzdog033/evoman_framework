@@ -8,9 +8,9 @@ sys.path.insert(0, 'evoman')
 
 
 def initialize_environment(enemies_list):
-    # headless = True
-    # if headless:
-    # os.environ["SDL_VIDEODRIVER"] = "dummy"
+    headless = True
+    if headless:
+        os.environ["SDL_VIDEODRIVER"] = "dummy"
 
     experiment_name = 'multimode_demo'
     if not os.path.exists(experiment_name):
