@@ -54,3 +54,18 @@ def get_sigma(curr_generation, no_of_generations):
     # sigma(generation) = 1 - 0.9 * generation/total_generations
     sigma = 1 - 0.9 * (curr_generation/no_of_generations)
     return sigma
+
+
+def add_sigma_to_individual(step_size, population):
+    # step_size = get_sigma(curr_generation, total_generations)
+
+    # pretty sure this is not correct!!
+
+    new_population = np.array([])
+
+    for i in range(len(population)):
+        individual = population[i]
+        individual = np.append(individual, step_size)
+        new_population = np.append(new_population, individual)
+
+    return new_population

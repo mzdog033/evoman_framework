@@ -4,7 +4,7 @@ from crossover import crossover
 from init_environment import initialize_environment
 from init_population import initialize_population
 from fitness import fittest_solution
-from mutation import deterministic_gaussian_mutation, probabilistic_gaussian_mutation
+from mutation import add_sigma_to_individual, deterministic_gaussian_mutation, probabilistic_gaussian_mutation
 from selection import probabilistic_survival_selection, round_robin_tournament_selection, tournament_selection
 import pandas as pd
 
@@ -16,15 +16,14 @@ from testing_best_individuals import play_top_ten
 # Initialize DEAP
 toolbox = base.Toolbox()
 toolbox.register("crossover", tools.cxTwoPoint)
-
-# mutation_ratio = 0.2
 toolbox.register("mutate", tools.mutGaussian, mu=0,
                  sigma=1, indpb=0.1)
 
 global_population_size = 10
-global_genome_size = 265
+global_genome_size = 266  # 265 + 1
 no_of_runs = 1
 no_of_generations = 2
+sigma = 0.5
 
 k_tournament_size = 2
 
@@ -32,7 +31,10 @@ np.random.seed(420)  # why 420? copied form optimization_generalist_demo.py
 
 
 def main_function():
+
+    # array to save solutions per set of enemies / per experiment
     average_solution_per_enemyset = np.array([])
+
     for enemy in range(1):  # /// 3-Enemies-loop start
 
         # INITIALIZE ENVIRONMENT with sets of enemies
@@ -41,18 +43,20 @@ def main_function():
 
         for EA in range(1):  # /// 2-EAs-loop start
 
+            # arrays to save stats throughout the runs
             average_fitness_pr_gen = np.array([])
             best_fitness_pr_gen = np.array([])
             best_inds_pr_gen = np.zeros((no_of_runs, global_genome_size))
-            best_fitness = -1
+
+            best_fitness = -1  # initial best fitness
+
             for run in range(no_of_runs):  # /// 10-runs-loop start
                 print(f' -------- RUN {run+1} -------- ')
                 print('Initial stats: ')
 
-                # INITIALIZE POPULATION
+                # INITIALIZE POPULATION - initialized with sigma added to the genome
                 population = initialize_population(
-                    global_population_size, global_genome_size)  # 150, 256
-                # population_size = population.shape[0]
+                    global_population_size, global_genome_size, sigma)  # 150, 266
 
                 # /// 20-generational-loop start
                 for generation in range(1, no_of_generations+1):
@@ -86,7 +90,7 @@ def main_function():
 
                     # CROSSOVER - no crossover, only mutation of individuals
 
-                    # MUTATION - Produce one child via mutation - SELF-ADAPTIVE THROUGH MUTATION STEP SIZE (IN META-EP)?
+                    # MUTATION - Produce one child via mutation
 
                     mutated_children = deterministic_gaussian_mutation(
                         population, generation, no_of_generations, global_population_size, global_genome_size)
