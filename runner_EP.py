@@ -3,7 +3,7 @@ import numpy as np
 from init_environment import initialize_environment
 from init_population import initialize_population
 from fitness import fittest_solution
-from selection import round_robin_tournament_selection, tournament_selection
+from selection import probabilistic_survival_selection, round_robin_tournament_selection, tournament_selection
 import pandas as pd
 
 from testing_best_individuals import play_top_ten
@@ -14,14 +14,18 @@ from testing_best_individuals import play_top_ten
 # Initialize DEAP
 toolbox = base.Toolbox()
 toolbox.register("crossover", tools.cxTwoPoint)
-global_genome_size = 265
+
 mutation_ratio = 0.2
 toolbox.register("mutate", tools.mutGaussian, mu=0,
                  sigma=1, indpb=0.1)
+
 global_population_size = 10
+global_genome_size = 265
 no_of_runs = 1
 no_of_generations = 2
+
 k_tournament_size = 2
+
 np.random.seed(420)  # why 420? copied form optimization_generalist_demo.py
 
 
@@ -119,63 +123,10 @@ def main_function():
                         population_size, genome_size)
 
                     # SURVIVAL SELECTION - PROBABILISTIC mu + mu
-                    # add children to population
-                    population = np.append(
-                        population, mutated_children, axis=0)
-                    population_size = population.shape[0]
-
-                    # now find the fitness of all the children
-                    list_of_offspring_fitnesses = fittest_solution(
-                        mutated_children, env)
-
-                    # add to list of fitnesses
-                    list_of_fitnesses = np.append(
-                        list_of_fitnesses, list_of_offspring_fitnesses)
-
-                    # ROUND ROBIN TOURNAMENT SELECTION
-                    print('round robin time')
-
-                    round_robin_scores = np.array([])
-                    individual_ids = np.arange(population_size)
-
-                    for individual_id in range(population_size):
-                        individual_score = round_robin_tournament_selection(
-                            individual_id, list_of_fitnesses)
-                        round_robin_scores = np.append(
-                            round_robin_scores, individual_score)
-
-                    # dict of indivdual_id - number of wins
-                    id_score_dict = dict(
-                        zip(individual_ids, round_robin_scores))
-
-                    # sort dict by value - reverse sorted for some reason
-                    dict_sort_by_scores_ascending = sorted(
-                        id_score_dict.items(), key=lambda item: item[1])
-
-                    # sort dict the correct way by scores
-                    dtype = [('id', int), ('score', int)]
-                    dict_sort_by_scores_descending = np.array(
-                        dict_sort_by_scores_ascending, dtype=dtype)[::-1]
-
-                    # collect the ids of the winners from the competition (keys)
-                    round_robin_winners_ids = np.array([])
-
-                    for i in range(population_size):
-                        round_robin_winners_ids = np.append(
-                            round_robin_winners_ids, int(dict_sort_by_scores_descending[i][0]))
-
-                    # get top n winner ids, where n is original population size
-                    top_n_winners = round_robin_winners_ids[:global_population_size]
-
-                    # get top n winners from population, and create new population.
-                    new_population = np.array([])
-                    for i in range(len(top_n_winners)):
-                        new_population = np.append(
-                            new_population, population[int(top_n_winners[i])])
-
-                    # new population size should be same as original population size (reshaping)
+                    new_population = probabilistic_survival_selection(population, list_of_fitnesses,
+                                                                      mutated_children, env, global_population_size)
                     population = new_population.reshape(
-                        global_population_size, genome_size)
+                        global_population_size, global_genome_size)
                     population_size = population.shape[0]
 
                     # Print stats for current generation
