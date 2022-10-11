@@ -118,20 +118,26 @@ def main_function():
                     mutated_children = mutated_children.reshape(
                         population_size, genome_size)
 
-                    # SURVIVAL SELECTION - PROBABILISTIC mu + mu - this is the round robin
-
-                    print('population shape',
-                          population.shape[0], population.shape[1])
-
+                    # SURVIVAL SELECTION - PROBABILISTIC mu + mu
+                    # add children to population
                     population = np.append(
-                        population, mutated_children, axis=1)
-                    print('population + children',
-                          population.shape[0], population.shape[1])
+                        population, mutated_children, axis=0)
+                    population_size = population.shape[0]
+
+                    # now find the fitness of all the children
+                    list_of_offspring_fitnesses = fittest_solution(
+                        mutated_children, env)
+
+                    # add to list of fitnesses
+                    list_of_fitnesses = np.append(
+                        list_of_fitnesses, list_of_offspring_fitnesses)
 
                     # ROUND ROBIN TOURNAMENT SELECTION
                     print('round robin time')
+
                     round_robin_scores = np.array([])
                     individual_ids = np.arange(population_size)
+
                     for individual_id in range(population_size):
                         individual_score = round_robin_tournament_selection(
                             individual_id, list_of_fitnesses)
@@ -153,24 +159,26 @@ def main_function():
 
                     # collect the ids of the winners from the competition (keys)
                     round_robin_winners_ids = np.array([])
-                    for i in range(len(population)):  # population includes children
+
+                    for i in range(population_size):
                         round_robin_winners_ids = np.append(
                             round_robin_winners_ids, int(dict_sort_by_scores_descending[i][0]))
 
                     # get top n winner ids, where n is original population size
-                    top_n_winners = round_robin_winners_ids[:population_size]
+                    top_n_winners = round_robin_winners_ids[:global_population_size]
 
                     # get top n winners from population, and create new population.
-                    # new population size should be same as oriignal population size
                     new_population = np.array([])
-                    print('length top n winners', len(top_n_winners))
                     for i in range(len(top_n_winners)):
                         new_population = np.append(
                             new_population, population[int(top_n_winners[i])])
 
-                    population = new_population  # population size cannot be reshaped currently
+                    # new population size should be same as original population size (reshaping)
+                    population = new_population
                     population = population.reshape(
-                        population_size, genome_size)
+                        global_population_size, genome_size)
+                    population_size = population.shape[0]
+
                     print('new popoulation',
                           population.shape[0], population.shape[1])
 
@@ -181,26 +189,26 @@ def main_function():
                 #  /// 20-generational-loop finished
 
                 # save to file
-                if run == no_of_runs-1:
-                    average_fitness_pr_gen = average_fitness_pr_gen.reshape(
-                        no_of_runs, no_of_generations)
-                    best_fitness_pr_gen = best_fitness_pr_gen.reshape(
-                        no_of_runs, no_of_generations)
-                    best_inds_pr_gen = best_inds_pr_gen.reshape(
-                        no_of_runs, genome_size)
+                # if run == no_of_runs-1:
+                #     average_fitness_pr_gen = average_fitness_pr_gen.reshape(
+                #         no_of_runs, no_of_generations)
+                #     best_fitness_pr_gen = best_fitness_pr_gen.reshape(
+                #         no_of_runs, no_of_generations)
+                #     best_inds_pr_gen = best_inds_pr_gen.reshape(
+                #         no_of_runs, genome_size)
 
-                f = open("./logs/µcommaλaverage_fitnesses_pr_run" +
-                         str(run+1)+"_enemy_group_"+str(enemy+1)+".csv", "a")
-                g = open("./logs/µcommaλbest_fitnesses_pr_run" +
-                         str(run+1)+"_enemy_group_"+str(enemy+1)+".csv", "a")
-                h = open("./logs/µcommaλbest_individuals_pr_run" +
-                         str(run+1)+"_enemy_group_"+str(enemy+1)+".csv", "a")
-                np.savetxt(f, average_fitness_pr_gen, delimiter=',')
-                np.savetxt(g, best_fitness_pr_gen, delimiter=',')
-                np.savetxt(h, best_inds_pr_gen, delimiter=',')
-                f.close()
-                g.close()
-                h.close()
+                # f = open("./logs/µcommaλaverage_fitnesses_pr_run" +
+                #          str(run+1)+"_enemy_group_"+str(enemy+1)+".csv", "a")
+                # g = open("./logs/µcommaλbest_fitnesses_pr_run" +
+                #          str(run+1)+"_enemy_group_"+str(enemy+1)+".csv", "a")
+                # h = open("./logs/µcommaλbest_individuals_pr_run" +
+                #          str(run+1)+"_enemy_group_"+str(enemy+1)+".csv", "a")
+                # np.savetxt(f, average_fitness_pr_gen, delimiter=',')
+                # np.savetxt(g, best_fitness_pr_gen, delimiter=',')
+                # np.savetxt(h, best_inds_pr_gen, delimiter=',')
+                # f.close()
+                # g.close()
+                # h.close()
 
             # /// 10-runs-loop finished
 
