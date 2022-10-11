@@ -1,24 +1,26 @@
 import numpy as np
-from deap import base, tools
 
 
-def gaussian_mutation(selected_individuals, mutation_operator: callable):
-    # mutation_ratio = 1.4  # change this, this is a random number
+def gaussian_mutation(mutation_ratio, children, toolbox, global_population_size, global_genome_size):
+    print('Commencing mutation...')
 
-    # sigma = 0.3
-    # genome_length = selected_group.shape[1]
-    # mutated_genes_count = round(mutation_ratio * genome_length)
+    mutated_children = np.array([])
 
-    # selected_group_count = selected_group.shape[0]
-    # mutants = np.array([])
+    for child in children:
+        # random number to compare with mutation_ratio
+        random_no = np.random.uniform(0, 1)
 
-    # for i in range(selected_group_count):
-    #     mutant = selected_group[np.random.randint(selected_group_count)]
+        if(random_no < mutation_ratio):
+            mutated_child = toolbox.mutate(child)
+            # add mutated child to mutated_children list
+            mutated_children = np.append(
+                mutated_children, mutated_child)
+        else:
+            # add non-mutated child to mutated_children list
+            mutated_children = np.append(
+                mutated_children, child)
 
-    #     for j in range(mutated_genes_count):
-    #         gene_index = np.random.randint(genome_length)
-    #         mutant[gene_index] += min(max(np.random.normal(0, sigma), -1), 1)
+    mutated_children = mutated_children.reshape(
+        global_population_size, global_genome_size)
 
-    #     mutants = np.concatenate((mutants, mutant), axis=None)
-
-    return mutants.reshape(selected_group_count, genome_length)
+    return mutated_children

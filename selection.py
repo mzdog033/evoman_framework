@@ -52,7 +52,7 @@ def round_robin_tournament_selection(individual_id, list_of_fitnesses):
     return int(individual_score)
 
 
-def probabilistic_survival_selection(population, list_of_fitnesses, mutated_children, env, global_population_size):
+def probabilistic_survival_selection(population, list_of_fitnesses, mutated_children, env, global_population_size, global_genome_size):
     # add children to population
     population = np.append(population, mutated_children, axis=0)
     population_size = population.shape[0]
@@ -106,6 +106,10 @@ def probabilistic_survival_selection(population, list_of_fitnesses, mutated_chil
     for i in range(len(top_n_winners)):
         new_population = np.append(
             new_population, population[int(top_n_winners[i])])
+
+    # reshape
+    new_population = new_population.reshape(
+        global_population_size, global_genome_size)
 
     # return new population of tournament winners
     return new_population

@@ -1,8 +1,10 @@
 from deap import base, tools
 import numpy as np
+from crossover import crossover
 from init_environment import initialize_environment
 from init_population import initialize_population
 from fitness import fittest_solution
+from mutation import gaussian_mutation
 from selection import probabilistic_survival_selection, round_robin_tournament_selection, tournament_selection
 import pandas as pd
 
@@ -50,8 +52,7 @@ def main_function():
                 # INITIALIZE POPULATION
                 population = initialize_population(
                     global_population_size, global_genome_size)  # 150, 256
-                genome_size = population.shape[1]
-                population_size = population.shape[0]
+                # population_size = population.shape[0]
 
                 # /// 20-generational-loop start
                 for generation in range(1, no_of_generations+1):
@@ -60,6 +61,7 @@ def main_function():
 
                     # best fitness curr generation
                     best_fitness_curr_gen = np.max(list_of_fitnesses)
+
                     # avg fitness curr generation
                     avg_fitness_curr_gen = np.mean(list_of_fitnesses)
 
@@ -80,53 +82,23 @@ def main_function():
                     average_fitness_pr_gen = np.append(
                         average_fitness_pr_gen, avg_fitness_curr_gen)
 
-                    # PARENT SELECTION - DETERMINISTIC SELECTION, WHERE EACH INDIVIDUAL PRUDCES ONE CHILD VIA MUTATION
-
+                    # PARENT SELECTION
                     selected_parents = tournament_selection(
                         population, list_of_fitnesses, k_tournament_size)  # selected_parents size (5 * 256)
                     parents_size = selected_parents.shape[0]
 
-                    # CROSSOVER - Each INDIVIDUAL PRODUCES ONE CHILD, but also there is no crossover, only mutation...of what
-                    children = np.array([])
+                    # CROSSOVER - EACH INDIVIDUAL PRODUCES ONE CHILD, but also there is no crossover, only mutation...of what
+                    children = crossover(
+                        selected_parents, parents_size, global_population_size, global_genome_size, toolbox)
 
-                    for parents in range(parents_size):
-                        parent_ind_1 = selected_parents[np.random.randint(
-                            len(selected_parents))]
-                        parent_ind_2 = selected_parents[np.random.randint(
-                            len(selected_parents))]
-
-                        ind1, ind2 = toolbox.crossover(
-                            parent_ind_1, parent_ind_2)
-                        children = np.append(children, ind1)
-                        children = np.append(children, ind2)
-
-                    children = children.reshape(population_size, genome_size)
-
-                    # MUTATION - Produce one child via mutation - SELF-ADAPTIVE THROUGH MUTATION STEP SIZE (IN META-EP)
-                    # choose a few children based on some probability "mutation_ratio"
-                    mutated_children = np.array([])
-                    for child in children:
-                        # random number to compare with mutation_ratio
-                        random_no = np.random.uniform(0, 1)
-
-                        if(random_no < mutation_ratio):
-                            mutated_child = toolbox.mutate(child)
-                            # add mutated child to mutated_children list
-                            mutated_children = np.append(
-                                mutated_children, mutated_child)
-                        else:
-                            # add non-mutated child to mutated_children list
-                            mutated_children = np.append(
-                                mutated_children, child)
-
-                    mutated_children = mutated_children.reshape(
-                        population_size, genome_size)
+                    # MUTATION - Produce one child via mutation - SELF-ADAPTIVE THROUGH MUTATION STEP SIZE (IN META-EP)?
+                    mutated_children = gaussian_mutation(
+                        mutation_ratio, children, toolbox, global_population_size, global_genome_size)
 
                     # SURVIVAL SELECTION - PROBABILISTIC mu + mu
                     new_population = probabilistic_survival_selection(population, list_of_fitnesses,
-                                                                      mutated_children, env, global_population_size)
-                    population = new_population.reshape(
-                        global_population_size, global_genome_size)
+                                                                      mutated_children, env, global_population_size, global_genome_size)
+                    population = new_population
                     population_size = population.shape[0]
 
                     # Print stats for current generation
