@@ -99,7 +99,6 @@ def main_function():
                     new_population = probabilistic_survival_selection(population, list_of_fitnesses,
                                                                       mutated_children, env, global_population_size, global_genome_size)
                     population = new_population
-                    population_size = population.shape[0]
 
                     # Print stats for current generation
                     print(

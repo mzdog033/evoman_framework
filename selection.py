@@ -31,7 +31,6 @@ def tournament_selection(population, list_of_fitnesses, k_rounds) -> list:
 
 
 def round_robin_tournament_selection(individual_id, list_of_fitnesses):
-    # dont need the opponent itself, only their fitness
 
     # FIND 10 OPPONENTS
     list_of_random_opponents = np.array([])

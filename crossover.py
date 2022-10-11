@@ -2,7 +2,7 @@ import numpy as np
 
 
 def crossover(selected_parents, parents_size, global_population_size, global_genome_size, toolbox):
-    print('Commencing crossover...')
+    print('Commencing crossover: Adaptive Crossover...')
 
     children = np.array([])
 

@@ -2,7 +2,7 @@ import numpy as np
 
 
 def gaussian_mutation(mutation_ratio, children, toolbox, global_population_size, global_genome_size):
-    print('Commencing mutation...')
+    print('Commencing mutation: Gaussian Perturbation...')
 
     mutated_children = np.array([])
 
