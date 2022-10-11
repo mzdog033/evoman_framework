@@ -174,13 +174,9 @@ def main_function():
                             new_population, population[int(top_n_winners[i])])
 
                     # new population size should be same as original population size (reshaping)
-                    population = new_population
-                    population = population.reshape(
+                    population = new_population.reshape(
                         global_population_size, genome_size)
                     population_size = population.shape[0]
-
-                    print('new popoulation',
-                          population.shape[0], population.shape[1])
 
                     # Print stats for current generation
                     print(
