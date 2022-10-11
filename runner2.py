@@ -11,8 +11,8 @@ from testing_best_individuals import play_top_ten
 # Initialize DEAP
 toolbox = base.Toolbox()
 toolbox.register("crossover", tools.cxTwoPoint)
-global_genome_size = 265
-mutation_ratio = 0.2
+global_genome_size = 265 
+mutation_ratio = 0.2 
 toolbox.register("mutate", tools.mutGaussian, mu=0,
                  sigma=1, indpb=0.1)
 global_population_size = 6

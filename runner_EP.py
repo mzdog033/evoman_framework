@@ -16,8 +16,7 @@ toolbox = base.Toolbox()
 toolbox.register("crossover", tools.cxTwoPoint)
 global_genome_size = 265
 mutation_ratio = 0.2
-toolbox.register("mutate", tools.mutGaussian, mu=0,
-                 sigma=1, indpb=0.1)
+toolbox.register("mutate", tools.mutGaussian, mu=0, sigma=1, indpb=0.1)
 global_population_size = 10
 no_of_runs = 1
 no_of_generations = 2
@@ -25,29 +24,35 @@ k_tournament_size = 2
 np.random.seed(420)  # why 420? copied form optimization_generalist_demo.py
 
 
-def main_function():
-    average_solution_per_enemyset = np.array([])
+def main_function(): 
+    average_solution_per_enemyset = np.array([]) 
     for enemy in range(1):  # /// 3-Enemies-loop start
 
         # INITIALIZE ENVIRONMENT with sets of enemies
-        enemies = np.array([[6, 4]])
-        env = initialize_environment(enemies[enemy])
+        enemies = np.array([[6, 4]]) 
+        env = initialize_environment(enemies[enemy]) 
 
-        for EA in range(1):  # /// 2-EAs-loop start
-
-            average_fitness_pr_gen = np.array([])
-            best_fitness_pr_gen = np.array([])
-            best_inds_pr_gen = np.zeros((no_of_runs, global_genome_size))
-            best_fitness = -1
+        for EA in range(1):  # /// 2-EAs-loop start # 0 = GA, 1 = EA 
+            average_fitness_pr_gen = np.array([]) 
+            best_fitness_pr_gen = np.array([]) 
+            best_inds_pr_gen = np.zeros((no_of_runs, global_genome_size)) # np.zeros because of the append function later on
+            best_fitness = -1 # best fitness of all generations 
             for run in range(no_of_runs):  # /// 10-runs-loop start
                 print(f' -------- RUN {run+1} -------- ')
                 print('Initial stats: ')
 
                 # INITIALIZE POPULATION
-                population = initialize_population(
-                    global_population_size, global_genome_size)  # 150, 256
-                genome_size = population.shape[1]
-                population_size = population.shape[0]
+                # [0] = rows, [1] = columns 
+                population = initialize_population(global_population_size, global_genome_size)  # 150, 256
+
+                # population.shape[0] is the number of rows in the population array 
+                population_size = population.shape[0] # 150 
+
+                # population.shape[1] is the number of columns in the population array
+                genome_size = population.shape[1]     # 256
+
+                print("population size: ", population_size) # population.shape[0] = 150
+                print("genome size: ", genome_size)         # population.shape[1] = 256
 
                 # /// 20-generational-loop start
                 for generation in range(1, no_of_generations+1):
@@ -62,50 +67,46 @@ def main_function():
                     # check if best fitness this gen is better than the current best fitness
                     if best_fitness_curr_gen > best_fitness:
                         best_fitness = best_fitness_curr_gen
-
+ 
                         # find individual with this fitness
-                        best_ind_idx = np.where(list_of_fitnesses ==
-                                                best_fitness)
-                        best_individual = population[best_ind_idx[0][0]]
+                        best_ind_idx = np.where(list_of_fitnesses == best_fitness)  # returns a tuple with the index of the best individual 
+                        best_individual = population[best_ind_idx[0][0]] # get the best individual from the population array 
                         # save individual to list
-                        best_inds_pr_gen[run] = best_individual
+                        best_inds_pr_gen[run] = best_individual # save the best individual of this run to the list of best individuals 
 
-                    # add to lists
-                    best_fitness_pr_gen = np.append(
-                        best_fitness_pr_gen, best_fitness_curr_gen)
-                    average_fitness_pr_gen = np.append(
-                        average_fitness_pr_gen, avg_fitness_curr_gen)
+                    # add to lists of best and average fitnesses 
+                    best_fitness_pr_gen = np.append(best_fitness_pr_gen, best_fitness_curr_gen)
+                    average_fitness_pr_gen = np.append(average_fitness_pr_gen, avg_fitness_curr_gen)
 
                     # PARENT SELECTION - DETERMINISTIC SELECTION, WHERE EACH INDIVIDUAL PRUDCES ONE CHILD VIA MUTATION
-
-                    selected_parents = tournament_selection(
-                        population, list_of_fitnesses, k_tournament_size)  # selected_parents size (5 * 256)
+                    
+                    selected_parents = tournament_selection(population, list_of_fitnesses, k_tournament_size)  # selected_parents size (5 * 256)
                     parents_size = selected_parents.shape[0]
 
                     # CROSSOVER - Each INDIVIDUAL PRODUCES ONE CHILD, but also there is no crossover, only mutation...of what
                     children = np.array([])
 
-                    for parents in range(parents_size):
-                        parent_ind_1 = selected_parents[np.random.randint(
-                            len(selected_parents))]
-                        parent_ind_2 = selected_parents[np.random.randint(
-                            len(selected_parents))]
+                    for parents in range(parents_size): # /// 5-parents-loop start
+                        parent_ind_1 = selected_parents[np.random.randint(len(selected_parents))]
+                        print(f"parent_ind_1, {parent_ind_1}")
+                        parent_ind_2 = selected_parents[np.random.randint(len(selected_parents))]
+                        print(f"parent_ind_2, {parent_ind_2}")
 
-                        ind1, ind2 = toolbox.crossover(
-                            parent_ind_1, parent_ind_2)
-                        children = np.append(children, ind1)
-                        children = np.append(children, ind2)
+                        ind1, ind2 = toolbox.crossover(parent_ind_1, parent_ind_2)
+                        children = np.append(children, ind1) # append the child to the children array  
+                        children = np.append(children, ind2) # append the child to the children array 
+                        # /// 5-parents-loop end 
 
                     children = children.reshape(population_size, genome_size)
 
                     # MUTATION - Produce one child via mutation - SELF-ADAPTIVE THROUGH MUTATION STEP SIZE (IN META-EP)
                     # choose a few children based on some probability "mutation_ratio"
-                    mutated_children = np.array([])
+                    mutated_children = np.array([]) 
                     for child in children:
                         # random number to compare with mutation_ratio
                         random_no = np.random.uniform(0, 1)
 
-                        if(random_no < mutation_ratio):
+                        if(random_no < mutation_ratio): 
                             mutated_child = toolbox.mutate(child)
                             # add mutated child to mutated_children list
                             mutated_children = np.append(
@@ -169,10 +170,9 @@ def main_function():
                             new_population, population[int(top_n_winners[i])])
 
                     population = new_population  # population size cannot be reshaped currently
-                    population = population.reshape(
-                        population_size, genome_size)
-                    print('new popoulation',
-                          population.shape[0], population.shape[1])
+                    population = population.reshape(population_size, genome_size)
+                    print('POP SHAPE', population.shape)
+                    # print('new popoulation',population.shape[0], population.shape[1])
 
                     # Print stats for current generation
                     print(
