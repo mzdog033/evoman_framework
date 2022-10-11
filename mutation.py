@@ -35,7 +35,6 @@ def deterministic_gaussian_mutation(population, curr_generation, total_generatio
     for individual in population:
         # sigma which gets smaller over the generations
         step_size = get_sigma(curr_generation, total_generations)
-        print(f'step size {step_size} in generation {curr_generation}')
 
         # mutated_child = toolbox.mutate(individual)
         mutated_child = tools.mutGaussian(
