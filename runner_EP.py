@@ -4,7 +4,7 @@ from crossover import crossover
 from init_environment import initialize_environment
 from init_population import initialize_population
 from fitness import fittest_solution
-from mutation import gaussian_mutation
+from mutation import deterministic_gaussian_mutation, probabilistic_gaussian_mutation
 from selection import probabilistic_survival_selection, round_robin_tournament_selection, tournament_selection
 import pandas as pd
 
@@ -17,7 +17,7 @@ from testing_best_individuals import play_top_ten
 toolbox = base.Toolbox()
 toolbox.register("crossover", tools.cxTwoPoint)
 
-mutation_ratio = 0.2
+# mutation_ratio = 0.2
 toolbox.register("mutate", tools.mutGaussian, mu=0,
                  sigma=1, indpb=0.1)
 
@@ -82,18 +82,14 @@ def main_function():
                     average_fitness_pr_gen = np.append(
                         average_fitness_pr_gen, avg_fitness_curr_gen)
 
-                    # PARENT SELECTION
-                    selected_parents = tournament_selection(
-                        population, list_of_fitnesses, k_tournament_size)  # selected_parents size (5 * 256)
-                    parents_size = selected_parents.shape[0]
+                    # PARENT SELECTION - none, all individuals are parents
 
-                    # CROSSOVER - EACH INDIVIDUAL PRODUCES ONE CHILD, but also there is no crossover, only mutation...of what
-                    children = crossover(
-                        selected_parents, parents_size, global_population_size, global_genome_size, toolbox)
+                    # CROSSOVER - no crossover, only mutation of individuals
 
                     # MUTATION - Produce one child via mutation - SELF-ADAPTIVE THROUGH MUTATION STEP SIZE (IN META-EP)?
-                    mutated_children = gaussian_mutation(
-                        mutation_ratio, children, toolbox, global_population_size, global_genome_size)
+
+                    mutated_children = deterministic_gaussian_mutation(
+                        population, generation, no_of_generations, global_population_size, global_genome_size)
 
                     # SURVIVAL SELECTION - PROBABILISTIC mu + mu
                     new_population = probabilistic_survival_selection(population, list_of_fitnesses,
@@ -107,26 +103,26 @@ def main_function():
                 #  /// 20-generational-loop finished
 
                 # save to file
-                # if run == no_of_runs-1:
-                #     average_fitness_pr_gen = average_fitness_pr_gen.reshape(
-                #         no_of_runs, no_of_generations)
-                #     best_fitness_pr_gen = best_fitness_pr_gen.reshape(
-                #         no_of_runs, no_of_generations)
-                #     best_inds_pr_gen = best_inds_pr_gen.reshape(
-                #         no_of_runs, genome_size)
+                if run == no_of_runs-1:
+                    average_fitness_pr_gen = average_fitness_pr_gen.reshape(
+                        no_of_runs, no_of_generations)
+                    best_fitness_pr_gen = best_fitness_pr_gen.reshape(
+                        no_of_runs, no_of_generations)
+                    best_inds_pr_gen = best_inds_pr_gen.reshape(
+                        no_of_runs, global_genome_size)
 
-                # f = open("./logs/µcommaλaverage_fitnesses_pr_run" +
-                #          str(run+1)+"_enemy_group_"+str(enemy+1)+".csv", "a")
-                # g = open("./logs/µcommaλbest_fitnesses_pr_run" +
-                #          str(run+1)+"_enemy_group_"+str(enemy+1)+".csv", "a")
-                # h = open("./logs/µcommaλbest_individuals_pr_run" +
-                #          str(run+1)+"_enemy_group_"+str(enemy+1)+".csv", "a")
-                # np.savetxt(f, average_fitness_pr_gen, delimiter=',')
-                # np.savetxt(g, best_fitness_pr_gen, delimiter=',')
-                # np.savetxt(h, best_inds_pr_gen, delimiter=',')
-                # f.close()
-                # g.close()
-                # h.close()
+                f = open("./logs/µcommaλaverage_fitnesses_pr_run" +
+                         str(run+1)+"_enemy_group_"+str(enemy+1)+".csv", "a")
+                g = open("./logs/µcommaλbest_fitnesses_pr_run" +
+                         str(run+1)+"_enemy_group_"+str(enemy+1)+".csv", "a")
+                h = open("./logs/µcommaλbest_individuals_pr_run" +
+                         str(run+1)+"_enemy_group_"+str(enemy+1)+".csv", "a")
+                np.savetxt(f, average_fitness_pr_gen, delimiter=',')
+                np.savetxt(g, best_fitness_pr_gen, delimiter=',')
+                np.savetxt(h, best_inds_pr_gen, delimiter=',')
+                f.close()
+                g.close()
+                h.close()
 
             # /// 10-runs-loop finished
 

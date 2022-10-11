@@ -1,5 +1,8 @@
 import numpy as np
 
+# get parents from selected parents shape
+# get selected parents from tournament selection
+
 
 def crossover(selected_parents, parents_size, global_population_size, global_genome_size, toolbox):
     print('Commencing crossover: Adaptive Crossover...')
