@@ -85,6 +85,9 @@ def main_function():
                 # PARENT SELECTION - none, all individuals are parents
 
                 # CROSSOVER - no crossover, only mutation of individuals
+                children = uniformCrossover(population, len(population), global_population_size, global_genome_size, toolbox)
+                # children = twoPointCrossover(population, len(population), global_population_size, global_genome_size, toolbox)
+                # children = adaptiveCrossover(population, len(population), global_population_size, global_genome_size, toolbox)
 
                 # sigma which gets smaller over the generations
                 step_size = get_sigma(generation, no_of_generations)
@@ -95,7 +98,7 @@ def main_function():
 
                 # MUTATION - each individual creates one child through mutation
                 mutated_children = deterministic_gaussian_mutation(
-                    population, step_size, global_population_size, global_genome_size)
+                    population, step_size, global_population_size, global_genome_size) #shouldn't it be children and not population?
 
                 # SURVIVAL SELECTION - round-robin tournament
                 new_population = probabilistic_survival_selection(population, list_of_fitnesses,
