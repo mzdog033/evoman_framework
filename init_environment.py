@@ -26,5 +26,5 @@ def initialize_environment(enemies_list):
                       enemymode="static",
                       level=2,
                       speed="fastest",
-                      randomini="yes")
+                      randomini="yes")  # make a note on this in the report
     return env

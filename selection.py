@@ -2,16 +2,17 @@ import numpy as np
 
 from fitness import fittest_solution
 
+# parent selection
 
-def tournament_selection(population, list_of_fitnesses, k_rounds) -> list:
-    population_size = population.shape[0]
-    genome_size = population.shape[1]
-    half_population_size = round(population_size/k_rounds)
+
+def tournament_selection(population, list_of_fitnesses, k_rounds, global_population_size, global_genome_size) -> list:
+    print('Commencing parents selection: Tournament selection...')
+    parents_size = round(global_population_size/k_rounds)
     selected_parents = np.array([])
 
-    for i in range(half_population_size):
-        individual1 = np.random.randint(population_size)
-        individual2 = np.random.randint(population_size)
+    for i in range(parents_size):
+        individual1 = np.random.randint(global_population_size)
+        individual2 = np.random.randint(global_population_size)
 
         fitness1 = list_of_fitnesses[individual1]
         fitness2 = list_of_fitnesses[individual2]
@@ -25,9 +26,11 @@ def tournament_selection(population, list_of_fitnesses, k_rounds) -> list:
                 (selected_parents, population[individual2]))
 
     selected_parents = selected_parents.reshape(
-        half_population_size, genome_size)
+        parents_size, global_genome_size)
 
     return selected_parents
+
+# survival selection
 
 
 def round_robin_tournament_selection(individual_id, list_of_fitnesses):
