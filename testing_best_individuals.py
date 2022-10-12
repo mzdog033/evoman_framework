@@ -3,10 +3,9 @@ import numpy as np
 import pandas as pd
 
 
-def play_top_ten(enemies, no_of_runs, enemy, env):
+def play_top_ten(enemies, no_of_runs, env, enemygroup, EA_no):
 
-    print('\n------- Testing top individuals against enemy group of',
-          enemies[enemy])
+    print('\n------- Testing top individuals against all enemies')
     average_solution_per_enemyset = np.array([])
 
     # initialize environment again
@@ -15,8 +14,7 @@ def play_top_ten(enemies, no_of_runs, enemy, env):
     for run in range(no_of_runs):
         print('------- Testing with top individual no. ', run+1)
 
-        path = './logs/µcommaλbest_individuals_pr_run' + \
-            str(run+1)+'_enemy_group_'+str(enemy+1)+'.csv'
+        path = f"./logs/EP_{EA_no}_best_individuals_pr_run{run+1}_enemy_group_{enemygroup}.csv"
         best_inds_csv = pd.read_csv(
             path, delimiter=',', header=None)
         best_inds_arr = best_inds_csv.to_numpy()
@@ -35,7 +33,7 @@ def play_top_ten(enemies, no_of_runs, enemy, env):
             fitness_from_best_ind_runs = np.append(
                 fitness_from_best_ind_runs, f)
 
-        print('fitness from best individuals', fitness_from_best_ind_runs)
+        print('\nFitness from best individuals', fitness_from_best_ind_runs)
         average_solution_per_enemyset = np.append(
             average_solution_per_enemyset, np.mean(fitness_from_best_ind_runs))
         print(
