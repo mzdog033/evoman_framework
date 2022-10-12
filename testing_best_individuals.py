@@ -16,7 +16,7 @@ def play_top_ten(no_of_runs, env, enemygroup, EA_no):
         print('------- Testing with top individual no. ', run+1)
 
         # reading best inds from list
-        path = f"./logs/EP_{EA_no}_best_individuals_run{run+1}_enemygr{enemygroup}.csv"
+        path = f"./logs/EA_{EA_no}_best_individuals_run{run+1}_enemygr{enemygroup}.csv"
         best_inds_csv = pd.read_csv(
             path, delimiter=',', header=None)
         best_inds_arr = best_inds_csv.to_numpy()
@@ -50,7 +50,7 @@ def play_top_ten(no_of_runs, env, enemygroup, EA_no):
     # find individual with that fitness
     best_individual = find_individual(
         average_fitnesses, best_fitness, best_inds_arr)
-    best_individual = np.asarray(best_individual).flatten()
+    best_individual = np.asarray(best_individual).reshape(1, 265)
 
     # saves best individuals + fitness against each enemygroup, in each EA, into one file
     f = open(

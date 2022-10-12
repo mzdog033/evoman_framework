@@ -5,7 +5,6 @@ import random
 
 def twoPointCrossover(selected_parents, parents_size, global_population_size, global_genome_size, toolbox):
     print('Commencing crossover: Two-point Crossover...')
-    print('parent size', parents_size)
 
     children = np.array([])
     toolbox.register("crossover", tools.cxTwoPoint)

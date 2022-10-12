@@ -14,8 +14,8 @@ toolbox = base.Toolbox()
 
 global_population_size = 10
 global_genome_size = 265
-no_of_runs = 3
-no_of_generations = 2
+no_of_runs = 150
+no_of_generations = 20
 mutation_ratio = 0.5
 k_tournament_size = 2
 
@@ -131,4 +131,4 @@ def algorithm(EA_no: int, enemies):
             no_of_runs, env, enemygroup, EA_no)
 
         print(
-            f'best fitness trained on enemy set {enemies}, EA {EA_no}: {best_fitness}')
+            f'best fitness trained on enemy set {enemies[enemygroup-1]}, EA {EA_no}: {best_fitness}')

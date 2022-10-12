@@ -6,7 +6,5 @@ def find_individual(list_of_fitnesses, fitness, population):
     individual_id = np.where(list_of_fitnesses ==
                              fitness)
 
-    print('indivdiual id', individual_id[0][0])
-
     individual = population[individual_id[0][0]]
     return individual
