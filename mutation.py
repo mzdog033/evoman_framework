@@ -27,16 +27,12 @@ def probabilistic_gaussian_mutation(mutation_ratio, children, toolbox, global_po
     return mutated_children
 
 
-def deterministic_gaussian_mutation(population, curr_generation, total_generations, global_population_size, global_genome_size):
+def deterministic_gaussian_mutation(population, step_size, global_population_size, global_genome_size):
     print('Commencing mutation: Deterministic Gaussian Mutation...')
 
     mutated_children = np.array([])
 
     for individual in population:
-        # sigma which gets smaller over the generations
-        step_size = get_sigma(curr_generation, total_generations)
-
-        # mutated_child = toolbox.mutate(individual)
         mutated_child = tools.mutGaussian(
             individual, mu=0, sigma=step_size, indpb=0.1)
 
@@ -56,16 +52,15 @@ def get_sigma(curr_generation, no_of_generations):
     return sigma
 
 
-def add_sigma_to_individual(step_size, population):
-    # step_size = get_sigma(curr_generation, total_generations)
-
-    # pretty sure this is not correct!!
-
+def add_sigma_to_individual(step_size, population, population_size, genome_size):
+    # replaces the last element in the genome with sigma
     new_population = np.array([])
 
     for i in range(len(population)):
         individual = population[i]
-        individual = np.append(individual, step_size)
+        individual[genome_size-1] = step_size
         new_population = np.append(new_population, individual)
+
+    new_population = new_population.reshape(population_size, genome_size)
 
     return new_population

@@ -4,7 +4,7 @@ from crossover import crossover
 from init_environment import initialize_environment
 from init_population import initialize_population
 from fitness import fittest_solution
-from mutation import add_sigma_to_individual, deterministic_gaussian_mutation, probabilistic_gaussian_mutation
+from mutation import add_sigma_to_individual, deterministic_gaussian_mutation, get_sigma, probabilistic_gaussian_mutation
 from selection import probabilistic_survival_selection, round_robin_tournament_selection, tournament_selection
 import pandas as pd
 
@@ -20,7 +20,7 @@ toolbox.register("mutate", tools.mutGaussian, mu=0,
                  sigma=1, indpb=0.1)
 
 global_population_size = 10
-global_genome_size = 266  # 265 + 1
+global_genome_size = 265  # 265 + 1
 no_of_runs = 1
 no_of_generations = 2
 sigma = 0.5
@@ -54,9 +54,9 @@ def main_function():
                 print(f' -------- RUN {run+1} -------- ')
                 print('Initial stats: ')
 
-                # INITIALIZE POPULATION - initialized with sigma added to the genome
+                # INITIALIZE POPULATION
                 population = initialize_population(
-                    global_population_size, global_genome_size, sigma)  # 150, 266
+                    global_population_size, global_genome_size)  # 150, 265
 
                 # /// 20-generational-loop start
                 for generation in range(1, no_of_generations+1):
@@ -90,12 +90,18 @@ def main_function():
 
                     # CROSSOVER - no crossover, only mutation of individuals
 
-                    # MUTATION - Produce one child via mutation
+                    # sigma which gets smaller over the generations
+                    step_size = get_sigma(generation, no_of_generations)
 
+                    # we add sigma at the end of the genome (replacing the original last value in the genome)
+                    population = add_sigma_to_individual(
+                        step_size, population, global_population_size, global_genome_size)
+
+                    # MUTATION - each individual creates one child through mutation
                     mutated_children = deterministic_gaussian_mutation(
-                        population, generation, no_of_generations, global_population_size, global_genome_size)
+                        population, step_size, global_population_size, global_genome_size)
 
-                    # SURVIVAL SELECTION - PROBABILISTIC mu + mu
+                    # SURVIVAL SELECTION - round-robin tournament
                     new_population = probabilistic_survival_selection(population, list_of_fitnesses,
                                                                       mutated_children, env, global_population_size, global_genome_size)
                     population = new_population
