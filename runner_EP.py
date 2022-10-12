@@ -1,6 +1,6 @@
 from deap import base, tools
 import numpy as np
-from crossover import crossover
+from crossover import uniformCrossover, twoPointCrossover, adaptiveCrossover
 from init_environment import initialize_environment
 from init_population import initialize_population
 from fitness import fittest_solution
@@ -15,7 +15,6 @@ from testing_best_individuals import play_top_ten
 
 # Initialize DEAP
 toolbox = base.Toolbox()
-toolbox.register("crossover", tools.cxTwoPoint)
 toolbox.register("mutate", tools.mutGaussian, mu=0,
                  sigma=1, indpb=0.1)
 
