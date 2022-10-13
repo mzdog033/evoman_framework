@@ -3,7 +3,7 @@ from deap import tools
 
 
 def probabilistic_gaussian_mutation(mutation_ratio, children, global_population_size, global_genome_size, step_size):
-    print('Commencing mutation: Probabilistic Gaussian mutation...')
+    # print('Commencing mutation: Probabilistic Gaussian mutation...')
 
     mutated_children = np.array([])
 
@@ -29,7 +29,7 @@ def probabilistic_gaussian_mutation(mutation_ratio, children, global_population_
 
 
 def deterministic_gaussian_mutation(population, step_size, global_population_size, global_genome_size):
-    print('Commencing mutation: Deterministic Gaussian Mutation...')
+    # print('Commencing mutation: Deterministic Gaussian Mutation...')
 
     mutated_children = np.array([])
 

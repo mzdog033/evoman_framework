@@ -4,7 +4,7 @@ import random
 
 
 def twoPointCrossover(selected_parents, parents_size, global_population_size, global_genome_size, toolbox):
-    print('Commencing crossover: Two-point Crossover...')
+    # print('Commencing crossover: Two-point Crossover...')
 
     children = np.array([])
     toolbox.register("crossover", tools.cxTwoPoint)
@@ -26,7 +26,7 @@ def twoPointCrossover(selected_parents, parents_size, global_population_size, gl
 
 
 def uniformCrossover(selected_parents, parents_size, global_population_size, global_genome_size, toolbox, indpb=0.1):
-    print('Commencing crossover: Uniform Crossover...')
+    # print('Commencing crossover: Uniform Crossover...')
 
     children = np.array([])
     toolbox.register("crossover", tools.cxUniform)
@@ -49,7 +49,7 @@ def uniformCrossover(selected_parents, parents_size, global_population_size, glo
 
 
 def adaptiveCrossover(selected_parents, parents_size, global_population_size, global_genome_size, toolbox, indpb=0.1):
-    print('Commencing crossover: Adaptive Crossover...')
+    # print('Commencing crossover: Adaptive Crossover...')
 
     children = np.array([])
 

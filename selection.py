@@ -6,7 +6,7 @@ from fitness import fittest_solution
 
 
 def tournament_selection(population, list_of_fitnesses, k_rounds, global_population_size, global_genome_size) -> list:
-    print('Commencing parents selection: Tournament selection...')
+    # print('Commencing parents selection: Tournament selection...')
     parents_size = round(global_population_size/k_rounds)
     selected_parents = np.array([])
 
@@ -68,7 +68,7 @@ def probabilistic_survival_selection(population, list_of_fitnesses, mutated_chil
         list_of_fitnesses, list_of_offspring_fitnesses)
 
     # ROUND ROBIN TOURNAMENT SELECTION
-    print('Commencing survival selection: Round-robin tournament...')
+    # print('Commencing survival selection: Round-robin tournament...')
 
     round_robin_scores = np.array([])  # tournament scores
     individual_ids = np.arange(population_size)  # invdivdual ids
