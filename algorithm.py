@@ -12,9 +12,9 @@ from testing_best_individuals import play_top_ten
 # Initialize DEAP
 toolbox = base.Toolbox()
 
-global_population_size = 10
+global_population_size = 150
 global_genome_size = 265
-no_of_runs = 150
+no_of_runs = 10
 no_of_generations = 20
 mutation_ratio = 0.5
 k_tournament_size = 2

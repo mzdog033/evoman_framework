@@ -21,6 +21,7 @@ best_inds_csv = pd.read_csv(
 best_fitness_csv = pd.read_csv(
     path_fitness, delimiter=',', header=None)
 
+# find best individual
 best_inds_arr = best_inds_csv.to_numpy()
 best_fitness_arr = best_fitness_csv.to_numpy()
 
