@@ -12,7 +12,7 @@ for EA_no in range(1, 4):
     algorithm(EA_no, enemies)
 
 # test the overall best individual against all enemies 5 times
-# read from file
+# read from file of 6 individuals
 path_individuals = f"./logs/best_individuals_overall.csv"
 path_fitness = f"./logs/best_fitness_overall.csv"
 

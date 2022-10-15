@@ -20,7 +20,6 @@ def play_top(overall_best_fitness, overall_best_individuals):
         print('Run no.', j+1)
         # test each of the top individuals against all the enemies
 
-        # env.update_parameter('enemies', enemies_list)
         f, pl, el, t = env.play(pcont=best_individual)
 
         fitnesses = np.append(
@@ -28,4 +27,10 @@ def play_top(overall_best_fitness, overall_best_individuals):
 
     # Print stats for current generation
     print(
-        f'-------\nBest solution stats - Best: {np.max(fitnesses)} Mean: {np.mean(fitnesses)} Std: {np.std(fitnesses)}')
+        f'\n-------Best solution stats - Best: {np.max(fitnesses)} Mean: {np.mean(fitnesses)} Std: {np.std(fitnesses)}')
+
+    # save individual to file
+    f = open(
+        f"./logs/best_single_individual.csv", "a")
+    np.savetxt(f, best_individual.flatten(), delimiter=',')
+    f.close()
