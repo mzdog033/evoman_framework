@@ -31,6 +31,6 @@ def play_top(overall_best_fitness, overall_best_individuals):
 
     # save individual to file
     f = open(
-        f"./logs/best_single_individual.csv", "a")
+        f"./logs/36.txt", "a")
     np.savetxt(f, best_individual.flatten(), delimiter=',')
     f.close()
