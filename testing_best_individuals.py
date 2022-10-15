@@ -52,7 +52,7 @@ def play_top_ten(no_of_runs, env, enemygroup, EA_no):
         average_fitnesses, best_fitness, best_inds_arr)
     best_individual = np.asarray(best_individual).reshape(1, 265)
 
-    # saves best individuals + fitness against each enemygroup, in each EA, into one file
+    # saves best individuals + fitness against each enemygroup, in each EA, into one file. Should in total be 6 entries
     f = open(
         f"./logs/best_individuals_overall.csv", "a")
     g = open(

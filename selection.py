@@ -30,9 +30,8 @@ def tournament_selection(population, list_of_fitnesses, k_rounds, global_populat
 
     return selected_parents
 
+
 # survival selection
-
-
 def round_robin_tournament_selection(individual_id, list_of_fitnesses):
 
     # FIND 10 OPPONENTS
